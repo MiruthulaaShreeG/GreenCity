@@ -17,7 +17,7 @@ public class CitizenReport {
     private LocalDateTime date = LocalDateTime.now();
     private String status;
     public enum ReportType {
-        POLLUTION, WASTE
+        POLLUTION, WASTE;
     }
 
     public long getReportID() {

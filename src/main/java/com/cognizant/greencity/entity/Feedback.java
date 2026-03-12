@@ -17,7 +17,7 @@ public class Feedback {
     private String status;
 
     public enum Category{
-        Waste,Energy,Water
+        Waste,Energy,Water;
     }
 
     public int getCitizenID() {
