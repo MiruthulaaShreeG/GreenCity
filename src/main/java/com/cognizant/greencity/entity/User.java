@@ -22,6 +22,9 @@ public class User {
     @Column(name="status")
     private String status;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<AuditLog> auditLogs;
+
     public User(){
 
     }
@@ -80,6 +83,10 @@ public class User {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    public List<AuditLog> getAuditLogs() { return auditLogs; }
+    public void setAuditLogs(List<AuditLog> auditLogs) { this.auditLogs = auditLogs; }
+
 }
 
 
