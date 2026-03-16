@@ -5,17 +5,31 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "citizen_reports")
+@Table(name = "citizen_report")
 public class CitizenReport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "report_id")
     private long reportID;
+
+    @Column(name = "citizen_id", nullable = false)
     private Long citizenID;
+
+
     @Enumerated(EnumType.STRING)
+    @Column(name = "type", length = 20)
     private ReportType type;
+
+    @Column(name = "location")
     private String location;
+
+    @Column(name = "date")
     private LocalDateTime date = LocalDateTime.now();
+
+    @Column(name = "status", length = 50)
     private String status;
+
+
     public enum ReportType {
         POLLUTION, WASTE;
     }
@@ -78,6 +92,5 @@ public class CitizenReport {
     }
 
     public CitizenReport(){
-
     }
 }

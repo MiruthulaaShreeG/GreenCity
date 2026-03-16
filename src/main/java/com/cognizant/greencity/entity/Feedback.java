@@ -3,16 +3,29 @@ package com.cognizant.greencity.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+
 @Entity
 public class Feedback {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "feedback_id")
     private int feedbackID;
+
+    @Column(name = "citizen_id", nullable = false)
     private int citizenID;
+
+
     @Enumerated(EnumType.STRING)
+    @Column(name = "category", length = 20)
     private Category category;
+
+    @Column(name = "comments", columnDefinition = "TEXT")
     private String comments;
+
+    @Column(name = "date")
     private LocalDate date;
+
+    @Column(name = "status", length = 50)
     private String status;  
     
     public enum Category{
