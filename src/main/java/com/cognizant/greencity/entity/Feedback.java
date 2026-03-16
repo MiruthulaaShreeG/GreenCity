@@ -3,7 +3,6 @@ package com.cognizant.greencity.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
-
 @Entity
 public class Feedback {
     @Id
@@ -14,8 +13,8 @@ public class Feedback {
     private Category category;
     private String comments;
     private LocalDate date;
-    private String status;
-
+    private String status;  
+    
     public enum Category{
         Waste,Energy,Water;
     }
