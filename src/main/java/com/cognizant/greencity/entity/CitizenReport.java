@@ -10,6 +10,7 @@ public class CitizenReport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long reportID;
+    @ManyToOne(fetch = FetchType.LAZY)
     private Long citizenID;
     @Enumerated(EnumType.STRING)
     private ReportType type;
