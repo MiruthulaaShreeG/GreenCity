@@ -22,7 +22,6 @@ public class FeedbackService {
         return feedbackRepository.save(feedback);
     }
 
-
     public List<Feedback> getAllFeedback() {
         return feedbackRepository.findAll();
     }
