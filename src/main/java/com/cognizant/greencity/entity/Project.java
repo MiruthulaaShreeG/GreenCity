@@ -45,8 +45,8 @@ public class Project {
     private List<Impact> impacts;
 
     // One project can have many compliance records
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ComplianceRecord> complianceRecords;
+//    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private List<ComplianceRecord> complianceRecords;
 
     // One project can trigger many notifications
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -137,13 +137,13 @@ public class Project {
         this.impacts = impacts;
     }
 
-    public List<ComplianceRecord> getComplianceRecords() {
-        return complianceRecords;
-    }
-
-    public void setComplianceRecords(List<ComplianceRecord> complianceRecords) {
-        this.complianceRecords = complianceRecords;
-    }
+//    public List<ComplianceRecord> getComplianceRecords() {
+//        return complianceRecords;
+//    }
+//
+//    public void setComplianceRecords(List<ComplianceRecord> complianceRecords) {
+//        this.complianceRecords = complianceRecords;
+//    }
 
     public List<Notification> getNotifications() {
         return notifications;
