@@ -1,43 +1,61 @@
-package com.cognizant.greencity.entity;
+package com.example.sustainability.entity;
 
 import jakarta.persistence.*;
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "reports")
 public class Report {
-
-    public enum Scope {
-        RESOURCE, PROJECT, FEEDBACK, COMPLIANCE
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "report_id")
     private Integer reportId;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "scope", nullable = false)
-    private Scope scope;
-    @Column(name = "metrics", nullable = false, columnDefinition = "TEXT")
-    private String metrics;
-    @Column(name = "generated_date", nullable = false)
-    private Instant generatedDate;
+    // =======================
+    // RELATIONSHIPS
+    // =======================
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "generated_by", nullable = false)
     private User generatedBy;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "audit_id")
+    @JoinColumn(name = "audit_id", nullable = false)
     private Audit audit;
 
-    @Column(name = "entity_id")
-    private Long entityId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "project_id")
+    private Project project;
 
-    public Report() {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "compliance_id")
+    private ComplianceRecord complianceRecord;
 
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "feedback_id")
+    private Feedback feedback;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "resource_id")
+    private Resource resource;
+
+    // =======================
+    // ATTRIBUTES
+    // =======================
+
+    @Column(name = "scope")
+    private String scope;
+
+    @Column(name = "metrics", columnDefinition = "TEXT")
+    private String metrics;
+
+    @Column(name = "generated_date")
+    private LocalDateTime generatedDate;
+
+    // =======================
+    // GETTERS & SETTERS
+    // =======================
 
     public Integer getReportId() {
         return reportId;
@@ -45,30 +63,6 @@ public class Report {
 
     public void setReportId(Integer reportId) {
         this.reportId = reportId;
-    }
-
-    public Scope getScope() {
-        return scope;
-    }
-
-    public void setScope(Scope scope) {
-        this.scope = scope;
-    }
-
-    public String getMetrics() {
-        return metrics;
-    }
-
-    public void setMetrics(String metrics) {
-        this.metrics = metrics;
-    }
-
-    public Instant getGeneratedDate() {
-        return generatedDate;
-    }
-
-    public void setGeneratedDate(Instant generatedDate) {
-        this.generatedDate = generatedDate;
     }
 
     public User getGeneratedBy() {
@@ -87,11 +81,59 @@ public class Report {
         this.audit = audit;
     }
 
-    public Long getEntityId() {
-        return entityId;
+    public Project getProject() {
+        return project;
     }
 
-    public void setEntityId(Long entityId) {
-        this.entityId = entityId;
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
+    public ComplianceRecord getComplianceRecord() {
+        return complianceRecord;
+    }
+
+    public void setComplianceRecord(ComplianceRecord complianceRecord) {
+        this.complianceRecord = complianceRecord;
+    }
+
+    public Feedback getFeedback() {
+        return feedback;
+    }
+
+    public void setFeedback(Feedback feedback) {
+        this.feedback = feedback;
+    }
+
+    public Resource getResource() {
+        return resource;
+    }
+
+    public void setResource(Resource resource) {
+        this.resource = resource;
+    }
+
+    public String getScope() {
+        return scope;
+    }
+
+    public void setScope(String scope) {
+        this.scope = scope;
+    }
+
+    public String getMetrics() {
+        return metrics;
+    }
+
+    public void setMetrics(String metrics) {
+        this.metrics = metrics;
+    }
+
+    public LocalDateTime getGeneratedDate() {
+        return generatedDate;
+    }
+
+    public void setGeneratedDate(LocalDateTime generatedDate) {
+        this.generatedDate = generatedDate;
     }
 }
