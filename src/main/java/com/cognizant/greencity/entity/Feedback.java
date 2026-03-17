@@ -48,7 +48,7 @@ public class Feedback {
         this.feedbackID = feedbackID;
     }
 
-    public Category getCategory() {
+    public String getCategory() {
         return category;
     }
 

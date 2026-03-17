@@ -50,7 +50,7 @@ public class CitizenReport {
         this.citizenID = citizenID;
     }
 
-    public ReportType getType() {
+    public String getType() {
         return type;
     }
 
