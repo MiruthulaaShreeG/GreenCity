@@ -15,9 +15,9 @@ public class Notification {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "report_id")
-    private Report report;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "report_id")
+//    private Report report;
 
     @Column(name = "entity_id")
     private Integer entityId;
@@ -42,7 +42,7 @@ public class Notification {
     public Notification(User user, Report report, Integer entityId, String entityType,
                         String message, String category, String status) {
         this.user = user;
-        this.report = report;
+        //this.report = report;
         this.entityId = entityId;
         this.entityType = entityType;
         this.message = message;
@@ -71,13 +71,13 @@ public class Notification {
         this.user = user;
     }
 
-    public Report getReport() {
-        return report;
-    }
+//    public Report getReport() {
+//        return report;
+//    }
 
-    public void setReport(Report report) {
-        this.report = report;
-    }
+//    public void setReport(Report report) {
+//        this.report = report;
+//    }
 
     public Integer getEntityId() {
         return entityId;

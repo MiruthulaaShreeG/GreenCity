@@ -28,12 +28,6 @@ public class Report {
     @JoinColumn(name = "generated_by", nullable = false)
     private User generatedBy;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "audit_id")
-    private Audit audit;
-
-    @Column(name = "entity_id")
-    private long entityId;
 
     public Report() {
 
@@ -79,19 +73,12 @@ public class Report {
         this.generatedBy = generatedBy;
     }
 
-    public Audit getAudit() {
-        return audit;
-    }
+//    public Audit getAudit() {
+//        return audit;
+//    }
+//
+//    public void setAudit(Audit audit) {
+//        this.audit = audit;
+//    }
 
-    public void setAudit(Audit audit) {
-        this.audit = audit;
-    }
-
-    public Long getEntityId() {
-        return entityId;
-    }
-
-    public void setEntityId(Long entityId) {
-        this.entityId = entityId;
-    }
 }
