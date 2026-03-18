@@ -10,6 +10,7 @@ public class Feedback {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int feedbackID;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn (name = "user_id", nullable=false)
     private int citizenID;
     @Enumerated(EnumType.STRING)
     private Category category;

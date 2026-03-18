@@ -11,6 +11,7 @@ public class CitizenReport {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long reportID;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn (name = "user_id", nullable=false)
     private Long citizenID;
     @Enumerated(EnumType.STRING)
     private ReportType type;
