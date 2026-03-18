@@ -1,4 +1,4 @@
-package com.cognizant.greencity.repository;
+package com.cognizant.greencity.dao;
 
 import com.cognizant.greencity.entity.ResourceUsage;
 import com.cognizant.greencity.entity.Resource;

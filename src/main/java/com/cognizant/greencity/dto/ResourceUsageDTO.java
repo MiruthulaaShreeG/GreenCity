@@ -1,4 +1,4 @@
-package com.cognizant.greencity.DTO;
+package com.cognizant.greencity.dto;
 
 import java.util.UUID;
 import java.time.LocalDateTime;

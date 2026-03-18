@@ -1,8 +1,8 @@
 package com.cognizant.greencity.controller;
 
-import com.cognizant.greencity.DTO.ResourceDTO;
+import com.cognizant.greencity.dto.ResourceDTO;
 import com.cognizant.greencity.entity.Resource;
-import com.cognizant.greencity.repository.ResourceRepository;
+import com.cognizant.greencity.dao.ResourceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
