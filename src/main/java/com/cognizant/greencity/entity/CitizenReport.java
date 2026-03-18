@@ -1,6 +1,8 @@
 package com.cognizant.greencity.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDateTime;
 
@@ -10,35 +12,43 @@ public class CitizenReport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "report_id")
-    private long reportID;
+    private Long reportID;
 
+    @NotNull(message = "Citizen ID cannot be null")
     @Column(name = "citizen_id", nullable = false)
     private Long citizenID;
 
+    // Foreign Key reference to User (no lazy loading to avoid LazyInitializationException)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "citizen_id", referencedColumnName = "user_id", insertable = false, updatable = false)
+    private User citizen;
 
+    @NotNull(message = "Report type cannot be null")
     @Enumerated(EnumType.STRING)
-    @Column(name = "type", length = 20)
+    @Column(name = "type", length = 20, nullable = false)
     private ReportType type;
 
-    @Column(name = "location")
+    @NotBlank(message = "Location cannot be blank")
+    @Column(name = "location", nullable = false)
     private String location;
 
-    @Column(name = "date")
-    private LocalDateTime date = LocalDateTime.now();
+    @Column(name = "date", nullable = false, updatable = false)
+    private LocalDateTime date;
 
-    @Column(name = "status", length = 50)
-    private String status;
+    @NotBlank(message = "Status cannot be blank")
+    @Column(name = "status", length = 50, nullable = false)
+    private String status = "PENDING";  // Default status
 
 
     public enum ReportType {
-        POLLUTION, WASTE;
+        POLLUTION, WASTE
     }
 
-    public long getReportID() {
+    public Long getReportID() {
         return reportID;
     }
 
-    public void setReportID(long reportID) {
+    public void setReportID(Long reportID) {
         this.reportID = reportID;
     }
 
@@ -50,7 +60,15 @@ public class CitizenReport {
         this.citizenID = citizenID;
     }
 
-    public String getType() {
+    public User getCitizen() {
+        return citizen;
+    }
+
+    public void setCitizen(User citizen) {
+        this.citizen = citizen;
+    }
+
+    public ReportType getType() {
         return type;
     }
 
@@ -82,15 +100,16 @@ public class CitizenReport {
         this.status = status;
     }
 
-    public CitizenReport(long reportID, Long citizenID, ReportType type, String location, LocalDateTime date, String status) {
+    public CitizenReport() {
+        this.date = LocalDateTime.now();
+    }
+
+    public CitizenReport(Long reportID, Long citizenID, ReportType type, String location, LocalDateTime date, String status) {
         this.reportID = reportID;
         this.citizenID = citizenID;
         this.type = type;
         this.location = location;
-        this.date = date;
-        this.status = status;
-    }
-
-    public CitizenReport(){
+        this.date = date != null ? date : LocalDateTime.now();
+        this.status = status != null ? status : "PENDING";
     }
 }

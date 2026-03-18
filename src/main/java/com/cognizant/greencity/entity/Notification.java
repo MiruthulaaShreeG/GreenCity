@@ -1,7 +1,15 @@
 package com.cognizant.greencity.entity;
+
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDateTime;
 
+/**
+ * Notification entity for tracking notifications sent to citizens.
+ * Created when a report is submitted, feedback is received, or status is updated.
+ */
 @Entity
 @Table(name = "notifications")
 public class Notification {
@@ -11,48 +19,56 @@ public class Notification {
     @Column(name = "notification_id")
     private Long notificationId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @NotNull(message = "Citizen ID cannot be null")
+    @Column(name = "citizen_id", nullable = false)
+    private Long citizenId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "report_id")
-    private Report report;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "citizen_id", referencedColumnName = "user_id", insertable = false, updatable = false)
+    private User citizen;
 
-    @Column(name = "entity_id")
-    private Integer entityId;
+    @NotBlank(message = "Notification type cannot be blank")
+    @Column(name = "notification_type", length = 50, nullable = false)
+    private String notificationType;  // REPORT_CREATED, STATUS_UPDATED, FEEDBACK_RECEIVED
 
-    @Column(name = "entity_type")
-    private String entityType;
+    @NotBlank(message = "Title cannot be blank")
+    @Column(name = "title", length = 255, nullable = false)
+    private String title;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "message", columnDefinition = "TEXT", nullable = false)
     private String message;
 
-    private String category;
+    @Column(name = "related_report_id")
+    private Long relatedReportId;
 
-    private String status;
+    @Column(name = "related_feedback_id")
+    private Long relatedFeedbackId;
 
-    @Column(name = "created_date")
+    @NotBlank(message = "Status cannot be blank")
+    @Column(name = "status", length = 50, nullable = false)
+    private String status = "UNREAD";  // UNREAD, READ
+
+    @Column(name = "created_date", nullable = false, updatable = false)
     private LocalDateTime createdDate;
 
+    @Column(name = "read_date")
+    private LocalDateTime readDate;
 
     public Notification() {
     }
 
-    public Notification(User user, Report report, Integer entityId, String entityType,
-                        String message, String category, String status) {
-        this.user = user;
-        this.report = report;
-        this.entityId = entityId;
-        this.entityType = entityType;
+    public Notification(Long notificationId, Long citizenId, User citizen, String notificationType, String title, String message, Long relatedReportId, Long relatedFeedbackId, String status, LocalDateTime createdDate, LocalDateTime readDate) {
+        this.notificationId = notificationId;
+        this.citizenId = citizenId;
+        this.citizen = citizen;
+        this.notificationType = notificationType;
+        this.title = title;
         this.message = message;
-        this.category = category;
+        this.relatedReportId = relatedReportId;
+        this.relatedFeedbackId = relatedFeedbackId;
         this.status = status;
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdDate = LocalDateTime.now();
+        this.createdDate = createdDate;
+        this.readDate = readDate;
     }
 
     public Long getNotificationId() {
@@ -63,36 +79,36 @@ public class Notification {
         this.notificationId = notificationId;
     }
 
-    public User getUser() {
-        return user;
+    public Long getCitizenId() {
+        return citizenId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setCitizenId(Long citizenId) {
+        this.citizenId = citizenId;
     }
 
-    public Report getReport() {
-        return report;
+    public User getCitizen() {
+        return citizen;
     }
 
-    public void setReport(Report report) {
-        this.report = report;
+    public void setCitizen(User citizen) {
+        this.citizen = citizen;
     }
 
-    public Integer getEntityId() {
-        return entityId;
+    public String getNotificationType() {
+        return notificationType;
     }
 
-    public void setEntityId(Integer entityId) {
-        this.entityId = entityId;
+    public void setNotificationType(String notificationType) {
+        this.notificationType = notificationType;
     }
 
-    public String getEntityType() {
-        return entityType;
+    public String getTitle() {
+        return title;
     }
 
-    public void setEntityType(String entityType) {
-        this.entityType = entityType;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getMessage() {
@@ -103,12 +119,20 @@ public class Notification {
         this.message = message;
     }
 
-    public String getCategory() {
-        return category;
+    public Long getRelatedReportId() {
+        return relatedReportId;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setRelatedReportId(Long relatedReportId) {
+        this.relatedReportId = relatedReportId;
+    }
+
+    public Long getRelatedFeedbackId() {
+        return relatedFeedbackId;
+    }
+
+    public void setRelatedFeedbackId(Long relatedFeedbackId) {
+        this.relatedFeedbackId = relatedFeedbackId;
     }
 
     public String getStatus() {
@@ -125,5 +149,23 @@ public class Notification {
 
     public void setCreatedDate(LocalDateTime createdDate) {
         this.createdDate = createdDate;
+    }
+
+    public LocalDateTime getReadDate() {
+        return readDate;
+    }
+
+    public void setReadDate(LocalDateTime readDate) {
+        this.readDate = readDate;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.createdDate == null) {
+            this.createdDate = LocalDateTime.now();
+        }
+        if (this.status == null) {
+            this.status = "UNREAD";
+        }
     }
 }

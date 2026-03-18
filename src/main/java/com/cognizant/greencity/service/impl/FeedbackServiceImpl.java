@@ -3,11 +3,14 @@ package com.cognizant.greencity.service.impl;
 import com.cognizant.greencity.dao.FeedbackRepository;
 import com.cognizant.greencity.dto.FeedbackDTO;
 import com.cognizant.greencity.entity.Feedback;
+import com.cognizant.greencity.entity.Notification;
 import com.cognizant.greencity.service.FeedbackService;
+import com.cognizant.greencity.Enum.Category;
+import com.cognizant.greencity.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import jakarta.transaction.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,49 +21,220 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Autowired
     private FeedbackRepository feedbackRepository;
 
-    // 1. Submit new feedback
+    @Autowired
+    private NotificationServiceImpl notificationService;
+
+    /**
+     * Submit new feedback
+     * Validates input and creates notification
+     */
     @Override
+    @Transactional
     public FeedbackDTO submitFeedback(FeedbackDTO dto) {
-        Feedback entity = new Feedback();
-        entity.setCitizenID((int) dto.getCitizenId());
-        // Standardizing category to uppercase for consistency
-        entity.setCategory(Feedback.Category.valueOf(dto.getCategory().toUpperCase()));
-        entity.setComments(dto.getComments());
-        entity.setDate(LocalDate.from(LocalDateTime.now()));
+        try {
+            // Validate required fields
+            if (dto.getCitizenId() == null || dto.getCitizenId() <= 0) {
+                throw new BadRequestException("Citizen ID must be a positive number");
+            }
+            if (dto.getCategory() == null) {
+                throw new BadRequestException("Category is required and must be one of: Waste, Energy, Water");
+            }
+            if (dto.getComments() == null || dto.getComments().trim().isEmpty()) {
+                throw new BadRequestException("Comments cannot be empty");
+            }
+            if (dto.getComments().length() < 10) {
+                throw new BadRequestException("Comments must be at least 10 characters long");
+            }
+            if (dto.getComments().length() > 1000) {
+                throw new BadRequestException("Comments cannot exceed 1000 characters");
+            }
 
-        // Setting default status if not provided
-        entity.setStatus(dto.getStatus() != null ? dto.getStatus() : "SUBMITTED");
+            Feedback entity = new Feedback();
+            entity.setCitizenID(dto.getCitizenId());
+            entity.setCategory(dto.getCategory());
+            entity.setComments(dto.getComments());
+            entity.setDate(LocalDateTime.now());
+            entity.setStatus("SUBMITTED");  // Default status
 
-        Feedback saved = feedbackRepository.save(entity);
-        return mapToDTO(saved);
+            Feedback saved = feedbackRepository.save(entity);
+
+            // Create notification
+            Notification notification = new Notification();
+            notification.setCitizenId(dto.getCitizenId());
+            notification.setNotificationType("FEEDBACK_RECEIVED");
+            notification.setTitle("Feedback Submitted Successfully");
+            notification.setMessage("Your feedback on " + dto.getCategory() + " has been received. Thank you!");
+            notification.setRelatedFeedbackId(saved.getFeedbackID());
+            notification.setStatus("UNREAD");
+            notificationService.createNotification(notification);
+
+            return mapToDTO(saved);
+        } catch (BadRequestException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InternalServiceError("Error submitting feedback: " + e.getMessage(), e);
+        }
     }
 
-    // 2. Retrieve all feedback entries
+    /**
+     * Retrieve all feedback entries
+     */
     @Override
     public List<FeedbackDTO> getAllFeedback() {
-        return feedbackRepository.findAll()
-                .stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+        try {
+            return feedbackRepository.findAll()
+                    .stream()
+                    .map(this::mapToDTO)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new InternalServiceError("Error retrieving feedback: " + e.getMessage(), e);
+        }
     }
 
-    // 3. Find specific feedback by ID
+    /**
+     * Find specific feedback by ID
+     */
     @Override
-    public FeedbackDTO getFeedbackById(int id) {
-        return feedbackRepository.findById(id)
-                .map(this::mapToDTO)
-                .orElse(null);
+    public FeedbackDTO getFeedbackById(Long id) {
+        try {
+            if (id == null || id <= 0) {
+                throw new BadRequestException("Feedback ID must be a positive number");
+            }
+
+            return feedbackRepository.findById(id)
+                    .map(this::mapToDTO)
+                    .orElseThrow(() -> new FeedbackNotFound("Feedback not found with ID: " + id));
+        } catch (FeedbackNotFound e) {
+            throw e;
+        } catch (BadRequestException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InternalServiceError("Error retrieving feedback: " + e.getMessage(), e);
+        }
     }
 
-    // Helper method to convert Entity to DTO
+    /**
+     * Get all feedback submitted by a citizen
+     */
+    @Override
+    public List<FeedbackDTO> getFeedbackByCitizenId(Long citizenId) {
+        try {
+            if (citizenId == null || citizenId <= 0) {
+                throw new BadRequestException("Citizen ID must be a positive number");
+            }
+
+            List<Feedback> feedbackList = feedbackRepository.findByCitizenID(citizenId);
+            if (feedbackList.isEmpty()) {
+                throw new FeedbackNotFound("No feedback found for citizen with ID: " + citizenId);
+            }
+
+            return feedbackList.stream()
+                    .map(this::mapToDTO)
+                    .collect(Collectors.toList());
+        } catch (FeedbackNotFound e) {
+            throw e;
+        } catch (BadRequestException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InternalServiceError("Error retrieving feedback for citizen: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Get feedback by category
+     */
+    @Override
+    public List<FeedbackDTO> getFeedbackByCategory(Category category) {
+        try {
+            if (category == null) {
+                throw new BadRequestException("Category is required");
+            }
+
+            List<Feedback> feedbackList = feedbackRepository.findByCategory(category);
+            if (feedbackList.isEmpty()) {
+                throw new FeedbackNotFound("No feedback found for category: " + category);
+            }
+
+            return feedbackList.stream()
+                    .map(this::mapToDTO)
+                    .collect(Collectors.toList());
+        } catch (FeedbackNotFound e) {
+            throw e;
+        } catch (BadRequestException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InternalServiceError("Error retrieving feedback by category: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Update feedback status (ADMIN ONLY)
+     */
+    @Override
+    @Transactional
+    public FeedbackDTO updateFeedbackStatus(Long feedbackId, String newStatus, String userRole) {
+        try {
+            // Only ADMIN can update status
+            if (userRole == null || !userRole.equals("ADMIN")) {
+                throw new UnauthorizedAccessException("Only admins can update feedback status");
+            }
+
+            if (feedbackId == null || feedbackId <= 0) {
+                throw new BadRequestException("Feedback ID must be a positive number");
+            }
+
+            if (newStatus == null || newStatus.trim().isEmpty()) {
+                throw new BadRequestException("Status cannot be empty");
+            }
+
+            Feedback feedback = feedbackRepository.findById(feedbackId)
+                    .orElseThrow(() -> new FeedbackNotFound("Feedback not found with ID: " + feedbackId));
+
+            feedback.setStatus(newStatus);
+            Feedback updated = feedbackRepository.save(feedback);
+
+            return mapToDTO(updated);
+        } catch (FeedbackNotFound | BadRequestException | UnauthorizedAccessException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InternalServiceError("Error updating feedback status: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Delete feedback
+     */
+    @Override
+    @Transactional
+    public void deleteFeedback(Long feedbackId) {
+        try {
+            if (feedbackId == null || feedbackId <= 0) {
+                throw new BadRequestException("Feedback ID must be a positive number");
+            }
+
+            if (!feedbackRepository.existsById(feedbackId)) {
+                throw new FeedbackNotFound("Feedback not found with ID: " + feedbackId);
+            }
+
+            feedbackRepository.deleteById(feedbackId);
+        } catch (FeedbackNotFound | BadRequestException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InternalServiceError("Error deleting feedback: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Helper method to convert Entity to DTO
+     */
     private FeedbackDTO mapToDTO(Feedback entity) {
         FeedbackDTO dto = new FeedbackDTO();
-        dto.setFeedbackId(Math.toIntExact(entity.getFeedbackID()));
-        dto.setCitizenId(Math.toIntExact(entity.getCitizenID()));
+        dto.setFeedbackId(entity.getFeedbackID());
+        dto.setCitizenId(entity.getCitizenID());
         dto.setCategory(entity.getCategory());
         dto.setComments(entity.getComments());
         dto.setStatus(entity.getStatus());
-        dto.setDate(entity.getDate().atStartOfDay());
+        dto.setDate(entity.getDate());
         return dto;
     }
 }

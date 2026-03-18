@@ -9,5 +9,4 @@ public class GreencityApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(GreencityApplication.class, args);
 	}
-
 }
