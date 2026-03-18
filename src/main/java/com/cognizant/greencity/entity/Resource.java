@@ -1,6 +1,5 @@
 package com.cognizant.greencity.entity;
 import jakarta.persistence.*;
-import java.util.UUID;
 import java.util.List;
 
 @Entity
@@ -8,9 +7,9 @@ import java.util.List;
 public class Resource {
 
     @Id
-    @GeneratedValue
-    @Column(name = "ResourceID", columnDefinition = "uuid", updatable = false, nullable = false)
-    private UUID resourceId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ResourceID", updatable = false, nullable = false)
+    private Integer resourceId;
 
     @Column(name = "Type", nullable = false, length = 50)
     private String type; // Energy / Water / Waste
@@ -33,8 +32,8 @@ public class Resource {
     private Project project;
 
     // Getters and Setters
-    public UUID getResourceId() { return resourceId; }
-    public void setResourceId(UUID resourceId) { this.resourceId = resourceId; }
+    public Integer getResourceId() { return resourceId; }
+    public void setResourceId(Integer resourceId) { this.resourceId = resourceId; }
 
     public String getType() { return type; }
     public void setType(String type) { this.type = type; }
