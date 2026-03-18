@@ -1,4 +1,4 @@
-package com.cognizant.greencity.controller;
+package com.cognizant.greencity.Controller;
 
 import com.cognizant.greencity.dto.FeedbackDTO;
 import com.cognizant.greencity.service.FeedbackService;

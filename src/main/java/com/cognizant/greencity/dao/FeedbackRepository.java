@@ -13,10 +13,10 @@ import java.util.Optional;
 @Repository
 public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
 
-    @Query("SELECT f FROM Feedback f WHERE f.citizenID = :citizenId ORDER BY f.date DESC")
+    @Query("SELECT f FROM Feedback f WHERE f.citizen.userId = :citizenId ORDER BY f.date DESC")
     List<Feedback> findByCitizenID(@Param("citizenId") Long citizenId);
 
-    @Query("SELECT f FROM Feedback f WHERE f.citizenID = :citizenId AND f.category = :category")
+    @Query("SELECT f FROM Feedback f WHERE f.citizen.userId = :citizenId AND f.category = :category")
     List<Feedback> findByCitizenIDAndCategory(@Param("citizenId") Long citizenId, @Param("category") Category category);
 
     @Query("SELECT f FROM Feedback f WHERE f.category = :category ORDER BY f.date DESC")

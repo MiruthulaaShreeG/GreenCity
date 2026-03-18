@@ -1,9 +1,11 @@
 package com.cognizant.greencity.service.impl;
 
 import com.cognizant.greencity.dao.FeedbackRepository;
+import com.cognizant.greencity.dao.UserRepository;
 import com.cognizant.greencity.dto.FeedbackDTO;
 import com.cognizant.greencity.entity.Feedback;
 import com.cognizant.greencity.entity.Notification;
+import com.cognizant.greencity.entity.User;
 import com.cognizant.greencity.service.FeedbackService;
 import com.cognizant.greencity.Enum.Category;
 import com.cognizant.greencity.exception.*;
@@ -23,6 +25,9 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Autowired
     private NotificationServiceImpl notificationService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     @Transactional
@@ -46,7 +51,9 @@ public class FeedbackServiceImpl implements FeedbackService {
             }
 
             Feedback entity = new Feedback();
-            entity.setCitizenID(dto.getCitizenId());
+            User citizen = userRepository.findById(dto.getCitizenId())
+                    .orElseThrow(() -> new BadRequestException("Citizen not found with ID: " + dto.getCitizenId()));
+            entity.setCitizen(citizen);
             entity.setCategory(dto.getCategory());
             entity.setComments(dto.getComments());
             entity.setDate(LocalDateTime.now());
@@ -207,7 +214,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     private FeedbackDTO mapToDTO(Feedback entity) {
         FeedbackDTO dto = new FeedbackDTO();
         dto.setFeedbackId(entity.getFeedbackID());
-        dto.setCitizenId(entity.getCitizenID());
+        dto.setCitizenId(entity.getCitizen().getUserId());
         dto.setCategory(entity.getCategory());
         dto.setComments(entity.getComments());
         dto.setStatus(entity.getStatus());

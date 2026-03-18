@@ -1,4 +1,4 @@
-package com.cognizant.greencity.controller;
+package com.cognizant.greencity.Controller;
 
 import com.cognizant.greencity.entity.Notification;
 import com.cognizant.greencity.service.impl.NotificationServiceImpl;

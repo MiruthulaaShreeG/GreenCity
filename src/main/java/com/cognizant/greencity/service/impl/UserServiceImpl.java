@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
         return mapToDTO(savedUser);
     }
     @Override
-    public UserDTO updateUser(Integer id, UserDTO userDto) {
+    public UserDTO updateUser(Long id, UserDTO userDto) {
 
         Optional<User> existingUserOpt = userRepository.findById(id);
 
@@ -47,11 +47,11 @@ public class UserServiceImpl implements UserService {
         return null;
     }
     @Override
-    public void deleteUser(Integer id) {
+    public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
     @Override
-    public UserDTO getUserById(Integer id) {
+    public UserDTO getUserById(Long id) {
         return userRepository.findById(id)
                 .map(this::mapToDTO)
                 .orElse(null);

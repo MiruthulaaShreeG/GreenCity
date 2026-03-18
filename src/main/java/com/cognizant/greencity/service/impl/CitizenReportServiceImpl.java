@@ -1,9 +1,11 @@
 package com.cognizant.greencity.service.impl;
 
 import com.cognizant.greencity.dao.CitizenReportRepository;
+import com.cognizant.greencity.dao.UserRepository;
 import com.cognizant.greencity.dto.CitizenReportDTO;
 import com.cognizant.greencity.entity.CitizenReport;
 import com.cognizant.greencity.entity.Notification;
+import com.cognizant.greencity.entity.User;
 import com.cognizant.greencity.service.CitizenReportService;
 import com.cognizant.greencity.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,9 @@ public class CitizenReportServiceImpl implements CitizenReportService {
 
     @Autowired
     private NotificationServiceImpl notificationService;
+
+    @Autowired
+    private UserRepository userRepository;
 
 
     @Override
@@ -47,7 +52,9 @@ public class CitizenReportServiceImpl implements CitizenReportService {
             }
 
             CitizenReport entity = new CitizenReport();
-            entity.setCitizenID(dto.getCitizenId());
+            User citizen = userRepository.findById(dto.getCitizenId())
+                    .orElseThrow(() -> new BadRequestException("Citizen not found with ID: " + dto.getCitizenId()));
+            entity.setCitizen(citizen);
             entity.setType(CitizenReport.ReportType.valueOf(dto.getType().toUpperCase()));
             entity.setLocation(dto.getLocation());
             entity.setDate(LocalDateTime.now());
@@ -154,7 +161,7 @@ public class CitizenReportServiceImpl implements CitizenReportService {
 
             // Create notification about status change
             Notification notification = new Notification();
-            notification.setCitizenId(report.getCitizenID());
+            notification.setCitizenId(report.getCitizen().getUserId());
             notification.setNotificationType("STATUS_UPDATED");
             notification.setTitle("Report Status Updated");
             notification.setMessage("Your report status has been updated from " + oldStatus + " to " + newStatus);
@@ -193,7 +200,7 @@ public class CitizenReportServiceImpl implements CitizenReportService {
     private CitizenReportDTO mapToDTO(CitizenReport entity) {
         CitizenReportDTO dto = new CitizenReportDTO();
         dto.setReportId(entity.getReportID());
-        dto.setCitizenId(entity.getCitizenID());
+        dto.setCitizenId(entity.getCitizen().getUserId());
         dto.setType(entity.getType().toString());
         dto.setLocation(entity.getLocation());
         dto.setStatus(entity.getStatus());

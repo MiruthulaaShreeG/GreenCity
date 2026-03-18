@@ -11,10 +11,10 @@ import java.util.Optional;
 
 @Repository
 public interface CitizenReportRepository extends JpaRepository<CitizenReport, Long> {
-    @Query("SELECT r FROM CitizenReport r WHERE r.citizenID = :citizenId ORDER BY r.date DESC")
+    @Query("SELECT r FROM CitizenReport r WHERE r.citizen.userId = :citizenId ORDER BY r.date DESC")
     List<CitizenReport> findByCitizenID(@Param("citizenId") Long citizenId);
 
-    @Query("SELECT r FROM CitizenReport r WHERE r.citizenID = :citizenId AND r.status = :status")
+    @Query("SELECT r FROM CitizenReport r WHERE r.citizen.userId = :citizenId AND r.status = :status")
     List<CitizenReport> findByCitizenIDAndStatus(@Param("citizenId") Long citizenId, @Param("status") String status);
     
 

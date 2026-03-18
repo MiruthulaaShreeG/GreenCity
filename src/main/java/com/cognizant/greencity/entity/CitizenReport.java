@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 public class CitizenReport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer reportID;
+    private Long reportID;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "citizen_id")
     private User citizen;
@@ -22,11 +22,11 @@ public class CitizenReport {
         POLLUTION, WASTE;
     }
 
-    public Integer getReportID() {
+    public Long getReportID() {
         return reportID;
     }
 
-    public void setReportID(Integer reportID) {
+    public void setReportID(Long reportID) {
         this.reportID = reportID;
     }
 
@@ -70,7 +70,7 @@ public class CitizenReport {
         this.status = status;
     }
 
-    public CitizenReport(Integer reportID, User citizen, ReportType type, String location, LocalDateTime date, String status) {
+    public CitizenReport(Long reportID, User citizen, ReportType type, String location, LocalDateTime date, String status) {
         this.reportID = reportID;
         this.citizen = citizen;
         this.type = type;

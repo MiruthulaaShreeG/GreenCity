@@ -1,26 +1,25 @@
 package com.cognizant.greencity.entity;
 
+import com.cognizant.greencity.Enum.Category;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 public class Feedback {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer feedbackID;
+    private Long feedbackID;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "citizen_id")
     private User citizen;
     @Enumerated(EnumType.STRING)
     private Category category;
     private String comments;
-    private LocalDate date;
+    private LocalDateTime date;
     private String status;
 
-    public enum Category{
-        Waste,Energy,Water;
-    }
 
     public User getCitizen() {
         return citizen;
@@ -30,11 +29,11 @@ public class Feedback {
         this.citizen = citizen;
     }
 
-    public Integer getFeedbackID() {
+    public Long getFeedbackID() {
         return feedbackID;
     }
 
-    public void setFeedbackID(Integer feedbackID) {
+    public void setFeedbackID(Long feedbackID) {
         this.feedbackID = feedbackID;
     }
 
@@ -54,11 +53,11 @@ public class Feedback {
         this.comments = comments;
     }
 
-    public LocalDate getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 
@@ -75,7 +74,7 @@ public class Feedback {
 
     }
 
-    public Feedback(Integer feedbackID, User citizen, Category category, String comments, LocalDate date, String status) {
+    public Feedback(Long feedbackID, User citizen, Category category, String comments, LocalDateTime date, String status) {
         this.feedbackID = feedbackID;
         this.citizen = citizen;
         this.category = category;

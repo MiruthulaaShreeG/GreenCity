@@ -5,8 +5,8 @@ import java.util.List;
 public interface UserService {
     UserDTO registerUser(UserDTO userDto);
     UserDTO getUserByEmail(String email);
-    UserDTO getUserById(Integer id);
+    UserDTO getUserById(Long id);
     List<UserDTO> getAllUsers();
-    UserDTO updateUser(Integer id, UserDTO userDto);
-    void deleteUser(Integer id);
+    UserDTO updateUser(Long id, UserDTO userDto);
+    void deleteUser(Long id);
 }
