@@ -12,10 +12,6 @@ public class Report {
     @Column(name = "report_id")
     private Integer reportId;
 
-    // =======================
-    // RELATIONSHIPS
-    // =======================
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "generated_by", nullable = false)
     private User generatedBy;
@@ -40,10 +36,6 @@ public class Report {
     @JoinColumn(name = "resource_id")
     private Resource resource;
 
-    // =======================
-    // ATTRIBUTES
-    // =======================
-
     @Column(name = "scope")
     private String scope;
 
@@ -52,10 +44,6 @@ public class Report {
 
     @Column(name = "generated_date")
     private LocalDateTime generatedDate;
-
-    // =======================
-    // GETTERS & SETTERS
-    // =======================
 
     public Integer getReportId() {
         return reportId;

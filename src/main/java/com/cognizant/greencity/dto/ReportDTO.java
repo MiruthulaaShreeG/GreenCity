@@ -17,10 +17,6 @@ public class ReportDTO {
     private String metrics;
     private LocalDateTime generatedDate;
 
-    // =======================
-    // GETTERS & SETTERS
-    // =======================
-
     public Integer getReportId() {
         return reportId;
     }
