@@ -5,17 +5,23 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
+@Table(name = "feedback")
 public class Feedback {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer feedbackID;
+    @Column(name = "feedbackid")
+    private Integer feedbackId;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "citizen_id")
     private User citizen;
     @Enumerated(EnumType.STRING)
+    @Column(name = "category")
     private Category category;
+    @Column(name = "comments")
     private String comments;
+    @Column(name = "date")
     private LocalDate date;
+    @Column(name = "status")
     private String status;
 
     public enum Category{
@@ -31,11 +37,11 @@ public class Feedback {
     }
 
     public Integer getFeedbackID() {
-        return feedbackID;
+        return feedbackId;
     }
 
     public void setFeedbackID(Integer feedbackID) {
-        this.feedbackID = feedbackID;
+        this.feedbackId = feedbackID;
     }
 
     public Category getCategory() {
@@ -76,7 +82,7 @@ public class Feedback {
     }
 
     public Feedback(Integer feedbackID, User citizen, Category category, String comments, LocalDate date, String status) {
-        this.feedbackID = feedbackID;
+        this.feedbackId = feedbackID;
         this.citizen = citizen;
         this.category = category;
         this.comments = comments;

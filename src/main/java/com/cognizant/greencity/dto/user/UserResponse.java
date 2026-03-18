@@ -1,18 +1,23 @@
-package com.cognizant.greencity.dto;
+package com.cognizant.greencity.dto.user;
 
-public class UserDTO {
-private Integer userId;
-private String name;
-private String email;
-private String phone;
-private String role;
-private String password;
-private String confirmPassword;
-private String status;
+public class UserResponse {
+    private Integer userId;
+    private String name;
+    private String email;
+    private String phone;
+    private String role;
+    private String status;
 
-public UserDTO(){
+    public UserResponse() {}
 
-}
+    public UserResponse(Integer userId, String name, String email, String phone, String role, String status) {
+        this.userId = userId;
+        this.name = name;
+        this.email = email;
+        this.phone = phone;
+        this.role = role;
+        this.status = status;
+    }
 
     public Integer getUserId() {
         return userId;
@@ -54,22 +59,6 @@ public UserDTO(){
         this.role = role;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getConfirmPassword() {
-        return confirmPassword;
-    }
-
-    public void setConfirmPassword(String confirmPassword) {
-        this.confirmPassword = confirmPassword;
-    }
-
     public String getStatus() {
         return status;
     }
@@ -78,3 +67,4 @@ public UserDTO(){
         this.status = status;
     }
 }
+

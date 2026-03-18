@@ -12,12 +12,11 @@ public class Milestone {
     @Column(name = "milestone_id")
     private Integer milestoneId;
 
-    // Many milestones belong to one project
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id", nullable = false)
     private Project project;
 
-    @Column(nullable = false)
+    @Column(name = "title")
     private String title;
 
     @Column(name = "date")
@@ -26,8 +25,7 @@ public class Milestone {
     @Column(name = "status")
     private String status;
 
-    public Milestone() {
-    }
+    public Milestone() {}
 
     public Integer getMilestoneId() {
         return milestoneId;
@@ -69,3 +67,4 @@ public class Milestone {
         this.status = status;
     }
 }
+

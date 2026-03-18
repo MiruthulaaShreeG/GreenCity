@@ -36,11 +36,9 @@ public class Project {
     @Column(name = "status")
     private String status;
 
-    // One project has many milestones
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Milestone> milestones;
 
-    // One project has many impacts
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Impact> impacts;
 

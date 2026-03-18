@@ -1,33 +1,22 @@
-package com.cognizant.greencity.entity;
-import jakarta.persistence.*;
+package com.cognizant.greencity.dto.audit;
+
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name="audit_logs")
-public class AuditLog {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "audit_id")
+public class AuditLogResponse {
     private Integer auditId;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-    @Column(name="action")
+    private Integer userId;
     private String action;
-    @Column(name="resources")
     private String resources;
-    @Column(name = "timestamp")
     private LocalDateTime timestamp;
 
-    public AuditLog(){
+    public AuditLogResponse() {}
 
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        if (this.timestamp == null) {
-            this.timestamp = LocalDateTime.now();
-        }
+    public AuditLogResponse(Integer auditId, Integer userId, String action, String resources, LocalDateTime timestamp) {
+        this.auditId = auditId;
+        this.userId = userId;
+        this.action = action;
+        this.resources = resources;
+        this.timestamp = timestamp;
     }
 
     public Integer getAuditId() {
@@ -38,12 +27,12 @@ public class AuditLog {
         this.auditId = auditId;
     }
 
-    public User getUser() {
-        return user;
+    public Integer getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public String getAction() {
@@ -70,3 +59,4 @@ public class AuditLog {
         this.timestamp = timestamp;
     }
 }
+

@@ -12,22 +12,20 @@ public class Impact {
     @Column(name = "impact_id")
     private Integer impactId;
 
-    // Many impacts belong to one project
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id", nullable = false)
     private Project project;
 
-    @Column(name = "metrics_json", columnDefinition = "TEXT")
-    private String metricsJson;
-
     @Column(name = "date")
     private LocalDateTime date;
+
+    @Column(name = "metrics_json", columnDefinition = "TEXT")
+    private String metricsJson;
 
     @Column(name = "status")
     private String status;
 
-    public Impact() {
-    }
+    public Impact() {}
 
     public Integer getImpactId() {
         return impactId;
@@ -45,20 +43,20 @@ public class Impact {
         this.project = project;
     }
 
-    public String getMetricsJson() {
-        return metricsJson;
-    }
-
-    public void setMetricsJson(String metricsJson) {
-        this.metricsJson = metricsJson;
-    }
-
     public LocalDateTime getDate() {
         return date;
     }
 
     public void setDate(LocalDateTime date) {
         this.date = date;
+    }
+
+    public String getMetricsJson() {
+        return metricsJson;
+    }
+
+    public void setMetricsJson(String metricsJson) {
+        this.metricsJson = metricsJson;
     }
 
     public String getStatus() {
@@ -69,3 +67,4 @@ public class Impact {
         this.status = status;
     }
 }
+

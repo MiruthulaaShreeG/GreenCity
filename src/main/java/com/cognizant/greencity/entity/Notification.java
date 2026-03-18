@@ -25,11 +25,13 @@ public class Notification {
     @Column(name = "entity_type")
     private String entityType;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "message", columnDefinition = "TEXT")
     private String message;
 
+    @Column(name = "category")
     private String category;
 
+    @Column(name = "status")
     private String status;
 
     @Column(name = "created_date")

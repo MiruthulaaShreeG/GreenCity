@@ -3,25 +3,25 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "ResourceUsage")
+@Table(name = "resource_usage")
 public class ResourceUsage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "UsageID", updatable = false, nullable = false)
+    @Column(name = "usageid", updatable = false, nullable = false)
     private Integer usageId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ResourceID", nullable = false)
+    @JoinColumn(name = "resourceid", nullable = false)
     private Resource resource;
 
-    @Column(name = "Quantity", nullable = false)
+    @Column(name = "quantity", nullable = false)
     private Double quantity;
 
-    @Column(name = "Date", nullable = false)
+    @Column(name = "date", nullable = false)
     private LocalDateTime date;
 
-    @Column(name = "Status", nullable = false, length = 50)
+    @Column(name = "status", nullable = false, length = 50)
     private String status;
 
     // Getters and Setters

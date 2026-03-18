@@ -1,7 +1,7 @@
 package com.cognizant.greencity.entity;
 
 import jakarta.persistence.*;
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "reports")
@@ -16,13 +16,21 @@ public class Report {
     @Column(name = "report_id")
     private Integer reportId;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "audit_id")
+    private Audit audit;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "scope", nullable = false)
     private Scope scope;
+
+    @Column(name = "entity_id")
+    private Long entityId;
+
     @Column(name = "metrics", nullable = false, columnDefinition = "TEXT")
     private String metrics;
     @Column(name = "generated_date", nullable = false)
-    private Instant generatedDate;
+    private LocalDateTime generatedDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "generated_by", nullable = false)
@@ -41,12 +49,28 @@ public class Report {
         this.reportId = reportId;
     }
 
+    public Audit getAudit() {
+        return audit;
+    }
+
+    public void setAudit(Audit audit) {
+        this.audit = audit;
+    }
+
     public Scope getScope() {
         return scope;
     }
 
     public void setScope(Scope scope) {
         this.scope = scope;
+    }
+
+    public Long getEntityId() {
+        return entityId;
+    }
+
+    public void setEntityId(Long entityId) {
+        this.entityId = entityId;
     }
 
     public String getMetrics() {
@@ -57,11 +81,11 @@ public class Report {
         this.metrics = metrics;
     }
 
-    public Instant getGeneratedDate() {
+    public LocalDateTime getGeneratedDate() {
         return generatedDate;
     }
 
-    public void setGeneratedDate(Instant generatedDate) {
+    public void setGeneratedDate(LocalDateTime generatedDate) {
         this.generatedDate = generatedDate;
     }
 
@@ -72,13 +96,5 @@ public class Report {
     public void setGeneratedBy(User generatedBy) {
         this.generatedBy = generatedBy;
     }
-
-//    public Audit getAudit() {
-//        return audit;
-//    }
-//
-//    public void setAudit(Audit audit) {
-//        this.audit = audit;
-//    }
 
 }

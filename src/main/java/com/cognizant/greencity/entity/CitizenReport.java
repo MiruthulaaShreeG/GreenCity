@@ -9,25 +9,30 @@ import java.time.LocalDateTime;
 public class CitizenReport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer reportID;
+    @Column(name = "reportid")
+    private Integer reportId;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "citizen_id")
     private User citizen;
     @Enumerated(EnumType.STRING)
+    @Column(name = "type")
     private ReportType type;
+    @Column(name = "location")
     private String location;
+    @Column(name = "date")
     private LocalDateTime date = LocalDateTime.now();
+    @Column(name = "status")
     private String status;
     public enum ReportType {
         POLLUTION, WASTE;
     }
 
     public Integer getReportID() {
-        return reportID;
+        return reportId;
     }
 
     public void setReportID(Integer reportID) {
-        this.reportID = reportID;
+        this.reportId = reportID;
     }
 
     public User getCitizen() {
@@ -71,7 +76,7 @@ public class CitizenReport {
     }
 
     public CitizenReport(Integer reportID, User citizen, ReportType type, String location, LocalDateTime date, String status) {
-        this.reportID = reportID;
+        this.reportId = reportID;
         this.citizen = citizen;
         this.type = type;
         this.location = location;

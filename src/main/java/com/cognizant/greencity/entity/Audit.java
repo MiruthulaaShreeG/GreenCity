@@ -23,8 +23,7 @@ public class Audit {
     @Column(name = "scope")
     private String scope; // e.g., "Resource", "Project", "Follow-up"
 
-    @Lob
-    @Column(name = "findings")
+    @Column(name = "findings", columnDefinition = "TINYTEXT")
     private String findings;
 
     @Column(name = "date")
