@@ -33,7 +33,7 @@ public class Report {
     private Audit audit;
 
     @Column(name = "entity_id")
-    private Long entityId;
+    private long entityId;
 
     public Report() {
 

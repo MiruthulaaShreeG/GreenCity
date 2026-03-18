@@ -8,10 +8,10 @@ import java.time.LocalDate;
 public class Feedback {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int feedbackID;
+    private Integer feedbackID;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn (name = "user_id", nullable=false)
-    private int citizenID;
+    @JoinColumn(name = "citizen_id")
+    private User citizen;
     @Enumerated(EnumType.STRING)
     private Category category;
     private String comments;
@@ -22,19 +22,19 @@ public class Feedback {
         Waste,Energy,Water;
     }
 
-    public int getCitizenID() {
-        return citizenID;
+    public User getCitizen() {
+        return citizen;
     }
 
-    public void setCitizenID(int citizenID) {
-        this.citizenID = citizenID;
+    public void setCitizen(User citizen) {
+        this.citizen = citizen;
     }
 
-    public int getFeedbackID() {
+    public Integer getFeedbackID() {
         return feedbackID;
     }
 
-    public void setFeedbackID(int feedbackID) {
+    public void setFeedbackID(Integer feedbackID) {
         this.feedbackID = feedbackID;
     }
 
@@ -75,13 +75,12 @@ public class Feedback {
 
     }
 
-    public Feedback(int feedbackID, int citizenID, Category category, String comments, LocalDate date, String status) {
+    public Feedback(Integer feedbackID, User citizen, Category category, String comments, LocalDate date, String status) {
         this.feedbackID = feedbackID;
-        this.citizenID = citizenID;
+        this.citizen = citizen;
         this.category = category;
         this.comments = comments;
         this.date = date;
         this.status = status;
     }
 }
-
