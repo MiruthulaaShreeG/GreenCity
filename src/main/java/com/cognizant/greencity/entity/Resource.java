@@ -1,6 +1,5 @@
 package com.cognizant.greencity.entity;
 import jakarta.persistence.*;
-import java.util.UUID;
 import java.util.List;
 
 @Entity
@@ -8,9 +7,9 @@ import java.util.List;
 public class Resource {
 
     @Id
-    @GeneratedValue
-    @Column(name = "ResourceID", columnDefinition = "uuid", updatable = false, nullable = false)
-    private UUID resourceId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ResourceID", updatable = false, nullable = false)
+    private Integer resourceId;
 
     @Column(name = "Type", nullable = false, length = 50)
     private String type; // Energy / Water / Waste
@@ -28,9 +27,13 @@ public class Resource {
     @OneToMany(mappedBy = "resource", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ResourceUsage> usages;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "project_id", nullable = false)
+    private Project project;
+
     // Getters and Setters
-    public UUID getResourceId() { return resourceId; }
-    public void setResourceId(UUID resourceId) { this.resourceId = resourceId; }
+    public Integer getResourceId() { return resourceId; }
+    public void setResourceId(Integer resourceId) { this.resourceId = resourceId; }
 
     public String getType() { return type; }
     public void setType(String type) { this.type = type; }
@@ -46,5 +49,13 @@ public class Resource {
 
     public List<ResourceUsage> getUsages() { return usages; }
     public void setUsages(List<ResourceUsage> usages) { this.usages = usages; }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
 }
 
