@@ -13,7 +13,7 @@ public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "notification_id")
-    private Long notificationId;
+    private Integer notificationId;
 
     @NotNull(message = "Citizen ID cannot be null")
     @Column(name = "citizen_id", nullable = false)
@@ -67,11 +67,11 @@ public class Notification {
         this.readDate = readDate;
     }
 
-    public Long getNotificationId() {
+    public Integer getNotificationId() {
         return notificationId;
     }
 
-    public void setNotificationId(Long notificationId) {
+    public void setNotificationId(Integer notificationId) {
         this.notificationId = notificationId;
     }
 
