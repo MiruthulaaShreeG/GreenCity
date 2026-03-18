@@ -9,7 +9,7 @@ public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "notification_id")
-    private Long notificationId;
+    private Integer notificationId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -55,11 +55,11 @@ public class Notification {
         this.createdDate = LocalDateTime.now();
     }
 
-    public Long getNotificationId() {
+    public Integer getNotificationId() {
         return notificationId;
     }
 
-    public void setNotificationId(Long notificationId) {
+    public void setNotificationId(Integer notificationId) {
         this.notificationId = notificationId;
     }
 

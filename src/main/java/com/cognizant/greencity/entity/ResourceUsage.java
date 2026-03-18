@@ -1,6 +1,5 @@
 package com.cognizant.greencity.entity;
 import jakarta.persistence.*;
-        import java.util.UUID;
 import java.time.LocalDateTime;
 
 @Entity
@@ -8,9 +7,9 @@ import java.time.LocalDateTime;
 public class ResourceUsage {
 
     @Id
-    @GeneratedValue
-    @Column(name = "UsageID", columnDefinition = "uuid", updatable = false, nullable = false)
-    private UUID usageId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "UsageID", updatable = false, nullable = false)
+    private Integer usageId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ResourceID", nullable = false)
@@ -26,8 +25,8 @@ public class ResourceUsage {
     private String status;
 
     // Getters and Setters
-    public UUID getUsageId() { return usageId; }
-    public void setUsageId(UUID usageId) { this.usageId = usageId; }
+    public Integer getUsageId() { return usageId; }
+    public void setUsageId(Integer usageId) { this.usageId = usageId; }
 
     public Resource getResource() { return resource; }
     public void setResource(Resource resource) { this.resource = resource; }
