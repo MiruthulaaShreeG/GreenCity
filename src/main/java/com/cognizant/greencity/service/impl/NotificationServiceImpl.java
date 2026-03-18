@@ -17,9 +17,6 @@ public class NotificationServiceImpl implements NotificationService {
     @Autowired
     private NotificationRepository notificationRepository;
 
-    /**
-     * Create a new notification
-     */
     @Override
     @Transactional
     public Notification createNotification(Notification notification) {
@@ -36,9 +33,6 @@ public class NotificationServiceImpl implements NotificationService {
         }
     }
 
-    /**
-     * Get all notifications for a citizen
-     */
     @Override
     public List<Notification> getNotificationsByCitizenId(Long citizenId) {
         try {
@@ -48,9 +42,6 @@ public class NotificationServiceImpl implements NotificationService {
         }
     }
 
-    /**
-     * Get unread notifications for a citizen
-     */
     @Override
     public List<Notification> getUnreadNotifications(Long citizenId) {
         try {
@@ -60,9 +51,6 @@ public class NotificationServiceImpl implements NotificationService {
         }
     }
 
-    /**
-     * Mark notification as read
-     */
     @Override
     @Transactional
     public Notification markAsRead(Long notificationId) {
@@ -79,9 +67,6 @@ public class NotificationServiceImpl implements NotificationService {
         }
     }
 
-    /**
-     * Delete a notification
-     */
     @Override
     @Transactional
     public void deleteNotification(Long notificationId) {

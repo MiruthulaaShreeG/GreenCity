@@ -2,9 +2,6 @@ package com.cognizant.greencity.exception;
 
 import java.time.LocalDateTime;
 
-/**
- * Standard error response format for all exceptions
- */
 public class ErrorResponse {
     private int status;
     private String message;

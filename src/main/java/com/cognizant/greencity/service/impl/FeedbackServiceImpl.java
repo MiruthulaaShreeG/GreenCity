@@ -24,10 +24,6 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Autowired
     private NotificationServiceImpl notificationService;
 
-    /**
-     * Submit new feedback
-     * Validates input and creates notification
-     */
     @Override
     @Transactional
     public FeedbackDTO submitFeedback(FeedbackDTO dto) {
@@ -76,9 +72,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         }
     }
 
-    /**
-     * Retrieve all feedback entries
-     */
+
     @Override
     public List<FeedbackDTO> getAllFeedback() {
         try {
@@ -91,9 +85,6 @@ public class FeedbackServiceImpl implements FeedbackService {
         }
     }
 
-    /**
-     * Find specific feedback by ID
-     */
     @Override
     public FeedbackDTO getFeedbackById(Long id) {
         try {
@@ -113,9 +104,6 @@ public class FeedbackServiceImpl implements FeedbackService {
         }
     }
 
-    /**
-     * Get all feedback submitted by a citizen
-     */
     @Override
     public List<FeedbackDTO> getFeedbackByCitizenId(Long citizenId) {
         try {
@@ -140,9 +128,6 @@ public class FeedbackServiceImpl implements FeedbackService {
         }
     }
 
-    /**
-     * Get feedback by category
-     */
     @Override
     public List<FeedbackDTO> getFeedbackByCategory(Category category) {
         try {
@@ -167,9 +152,6 @@ public class FeedbackServiceImpl implements FeedbackService {
         }
     }
 
-    /**
-     * Update feedback status (ADMIN ONLY)
-     */
     @Override
     @Transactional
     public FeedbackDTO updateFeedbackStatus(Long feedbackId, String newStatus, String userRole) {
@@ -201,9 +183,6 @@ public class FeedbackServiceImpl implements FeedbackService {
         }
     }
 
-    /**
-     * Delete feedback
-     */
     @Override
     @Transactional
     public void deleteFeedback(Long feedbackId) {
@@ -224,9 +203,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         }
     }
 
-    /**
-     * Helper method to convert Entity to DTO
-     */
+
     private FeedbackDTO mapToDTO(Feedback entity) {
         FeedbackDTO dto = new FeedbackDTO();
         dto.setFeedbackId(entity.getFeedbackID());

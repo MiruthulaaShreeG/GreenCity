@@ -23,13 +23,6 @@ public class NotificationController {
     @Autowired
     private NotificationServiceImpl notificationService;
 
-    /**
-     * Get all notifications for a citizen
-     * GET /api/notifications/citizen/{citizenId}
-     *
-     * @param citizenId - ID of the citizen
-     * @return List of all notifications
-     */
     @GetMapping("/citizen/{citizenId}")
     public ResponseEntity<Map<String, Object>> getNotificationsByCitizenId(
             @PathVariable Long citizenId) {
@@ -42,13 +35,7 @@ public class NotificationController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Get unread notifications for a citizen
-     * GET /api/notifications/citizen/{citizenId}/unread
-     *
-     * @param citizenId - ID of the citizen
-     * @return List of unread notifications
-     */
+
     @GetMapping("/citizen/{citizenId}/unread")
     public ResponseEntity<Map<String, Object>> getUnreadNotifications(
             @PathVariable Long citizenId) {
@@ -61,13 +48,7 @@ public class NotificationController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Mark notification as read
-     * PUT /api/notifications/{notificationId}/read
-     *
-     * @param notificationId - ID of the notification
-     * @return Updated notification
-     */
+
     @PutMapping("/{notificationId}/read")
     public ResponseEntity<Map<String, Object>> markAsRead(
             @PathVariable Long notificationId) {
@@ -78,13 +59,6 @@ public class NotificationController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Delete notification
-     * DELETE /api/notifications/{notificationId}
-     *
-     * @param notificationId - ID of the notification
-     * @return Success message
-     */
     @DeleteMapping("/{notificationId}")
     public ResponseEntity<Map<String, String>> deleteNotification(
             @PathVariable Long notificationId) {

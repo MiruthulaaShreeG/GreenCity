@@ -6,10 +6,6 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
-/**
- * Notification entity for tracking notifications sent to citizens.
- * Created when a report is submitted, feedback is received, or status is updated.
- */
 @Entity
 @Table(name = "notifications")
 public class Notification {

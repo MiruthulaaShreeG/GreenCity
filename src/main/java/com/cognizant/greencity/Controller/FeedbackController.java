@@ -16,10 +16,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-/**
- * REST API Controller for Feedback Operations
- * Endpoints for submitting, retrieving, and managing citizen feedback
- */
 @RestController
 @RequestMapping("/api/feedback")
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -28,13 +24,6 @@ public class FeedbackController {
     @Autowired
     private FeedbackService feedbackService;
 
-    /**
-     * Submit new feedback
-     * POST /api/feedback
-     *
-     * @param feedbackDTO - Feedback details (citizenId, category, comments, etc.)
-     * @return Created feedback with status 201
-     */
     @PostMapping
     public ResponseEntity<Map<String, Object>> submitFeedback(
             @Valid @RequestBody FeedbackDTO feedbackDTO) {
@@ -46,12 +35,6 @@ public class FeedbackController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    /**
-     * Get all feedback
-     * GET /api/feedback
-     *
-     * @return List of all feedback entries
-     */
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllFeedback() {
         List<FeedbackDTO> feedbackList = feedbackService.getAllFeedback();
@@ -62,13 +45,6 @@ public class FeedbackController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Get feedback by ID
-     * GET /api/feedback/{feedbackId}
-     *
-     * @param feedbackId - ID of the feedback
-     * @return Feedback details
-     */
     @GetMapping("/{feedbackId}")
     public ResponseEntity<Map<String, Object>> getFeedbackById(@PathVariable Long feedbackId) {
         FeedbackDTO feedback = feedbackService.getFeedbackById(feedbackId);
@@ -78,13 +54,6 @@ public class FeedbackController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Get feedback by citizen ID
-     * GET /api/feedback/citizen/{citizenId}
-     *
-     * @param citizenId - ID of the citizen
-     * @return List of feedback from the citizen
-     */
     @GetMapping("/citizen/{citizenId}")
     public ResponseEntity<Map<String, Object>> getFeedbackByCitizenId(
             @PathVariable Long citizenId) {
@@ -97,13 +66,6 @@ public class FeedbackController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Get feedback by category
-     * GET /api/feedback/category/{category}
-     *
-     * @param category - Category filter (Waste, Energy, Water)
-     * @return List of feedback in the category
-     */
     @GetMapping("/category/{category}")
     public ResponseEntity<Map<String, Object>> getFeedbackByCategory(
             @PathVariable String category) {
@@ -122,15 +84,6 @@ public class FeedbackController {
         }
     }
 
-    /**
-     * Update feedback status (ADMIN ONLY)
-     * PUT /api/feedback/{feedbackId}/status
-     * Only admins can update status - citizens cannot update their own feedback
-     *
-     * @param feedbackId - ID of the feedback
-     * @param statusUpdate - New status and user role
-     * @return Updated feedback
-     */
     @PutMapping("/{feedbackId}/status")
     public ResponseEntity<Map<String, Object>> updateFeedbackStatus(
             @PathVariable Long feedbackId,
@@ -148,13 +101,6 @@ public class FeedbackController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Delete feedback
-     * DELETE /api/feedback/{feedbackId}
-     *
-     * @param feedbackId - ID of the feedback to delete
-     * @return Success message
-     */
     @DeleteMapping("/{feedbackId}")
     public ResponseEntity<Map<String, String>> deleteFeedback(@PathVariable Long feedbackId) {
         feedbackService.deleteFeedback(feedbackId);
@@ -164,9 +110,6 @@ public class FeedbackController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Inner class for status update request
-     */
     public static class StatusUpdateRequest {
         private String newStatus;
         private String userRole;

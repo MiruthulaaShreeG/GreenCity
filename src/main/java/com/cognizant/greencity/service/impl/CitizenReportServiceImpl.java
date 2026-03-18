@@ -23,10 +23,7 @@ public class CitizenReportServiceImpl implements CitizenReportService {
     @Autowired
     private NotificationServiceImpl notificationService;
 
-    /**
-     * File a new report (Create)
-     * Validates input and creates notification
-     */
+
     @Override
     @Transactional
     public CitizenReportDTO fileReport(CitizenReportDTO dto) {
@@ -76,9 +73,6 @@ public class CitizenReportServiceImpl implements CitizenReportService {
         }
     }
 
-    /**
-     * Get all reports (Read)
-     */
     @Override
     public List<CitizenReportDTO> getAllReports() {
         try {
@@ -91,9 +85,6 @@ public class CitizenReportServiceImpl implements CitizenReportService {
         }
     }
 
-    /**
-     * Get all reports by citizen ID
-     */
     @Override
     public List<CitizenReportDTO> getReportsByCitizenId(Long citizenId) {
         try {
@@ -118,9 +109,6 @@ public class CitizenReportServiceImpl implements CitizenReportService {
         }
     }
 
-    /**
-     * Get report by ID
-     */
     @Override
     public CitizenReportDTO getReportById(Long reportId) {
         try {
@@ -140,10 +128,6 @@ public class CitizenReportServiceImpl implements CitizenReportService {
         }
     }
 
-    /**
-     * Update report status (ADMIN ONLY)
-     * Only admins can update status, citizens cannot
-     */
     @Override
     @Transactional
     public CitizenReportDTO updateReportStatus(Long reportId, String newStatus, String userRole) {
@@ -186,9 +170,6 @@ public class CitizenReportServiceImpl implements CitizenReportService {
         }
     }
 
-    /**
-     * Delete a report
-     */
     @Override
     @Transactional
     public void deleteReport(Long reportId) {
@@ -209,9 +190,6 @@ public class CitizenReportServiceImpl implements CitizenReportService {
         }
     }
 
-    /**
-     * Helper method for mapping entity to DTO
-     */
     private CitizenReportDTO mapToDTO(CitizenReport entity) {
         CitizenReportDTO dto = new CitizenReportDTO();
         dto.setReportId(entity.getReportID());
