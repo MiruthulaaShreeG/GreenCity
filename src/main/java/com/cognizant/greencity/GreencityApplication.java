@@ -8,6 +8,6 @@ public class GreencityApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(GreencityApplication.class, args);
-		System.out.println("roshan");
+		//System.out.println("roshan");
 	}
 }
