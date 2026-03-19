@@ -1,9 +1,8 @@
-package com.cognizant.greencity.Controller;
+package com.cognizant.greencity.controller;
 
 import com.cognizant.greencity.dto.FeedbackDTO;
 import com.cognizant.greencity.service.FeedbackService;
 import com.cognizant.greencity.Enum.Category;
-import com.cognizant.greencity.exception.FeedbackNotFound;
 import com.cognizant.greencity.exception.BadRequestException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

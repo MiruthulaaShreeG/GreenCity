@@ -1,9 +1,8 @@
-package com.cognizant.greencity.Controller;
+package com.cognizant.greencity.controller;
 
 import com.cognizant.greencity.entity.Notification;
 import com.cognizant.greencity.service.impl.NotificationServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

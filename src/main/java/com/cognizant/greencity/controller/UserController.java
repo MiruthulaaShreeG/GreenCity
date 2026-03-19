@@ -1,4 +1,4 @@
-package com.cognizant.greencity.Controller;
+package com.cognizant.greencity.controller;
 import com.cognizant.greencity.dto.UserDTO;
 import com.cognizant.greencity.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

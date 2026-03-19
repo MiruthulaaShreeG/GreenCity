@@ -1,9 +1,7 @@
-package com.cognizant.greencity.Controller;
+package com.cognizant.greencity.controller;
 
 import com.cognizant.greencity.dto.CitizenReportDTO;
 import com.cognizant.greencity.service.CitizenReportService;
-import com.cognizant.greencity.exception.CitizenReportNotFound;
-import com.cognizant.greencity.exception.BadRequestException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
