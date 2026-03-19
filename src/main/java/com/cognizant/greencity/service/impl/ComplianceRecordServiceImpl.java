@@ -7,6 +7,8 @@ import com.cognizant.greencity.service.ComplicanceRecordSercive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ComplianceRecordServiceImpl implements ComplicanceRecordSercive {
 
@@ -20,11 +22,21 @@ public class ComplianceRecordServiceImpl implements ComplicanceRecordSercive {
         complianceRecord.setEntityType(request.getEntityType());
         complianceRecord.setNotes(request.getNotes());
         complianceRecord.setDate(request.getDate());
-
         // Save to database
         ComplianceRecord savedRecord = complianceRecordRepository.save(complianceRecord);
         return mapTODTO(savedRecord);
-
+    }
+    public List<ComplianceRecordDTO> getAllComplianceRecords(){
+        List<ComplianceRecord> complianceRecords = complianceRecordRepository.findAll();
+        return complianceRecords.stream()
+                .map(this::mapTODTO)
+                .toList();
+    }
+    public  ComplianceRecordDTO getComplianceRecordById(int id){
+        ComplianceRecordDTO record = complianceRecordRepository.findById(id)
+                .map(this::mapTODTO)
+                .orElse(null);
+        return record;
     }
     public ComplianceRecordDTO mapTODTO(ComplianceRecord complianceRecord) {
         ComplianceRecordDTO complianceRecordDTO = new ComplianceRecordDTO();

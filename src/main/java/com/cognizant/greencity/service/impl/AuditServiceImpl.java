@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class AuditServiceImpl implements AuditService {
@@ -36,6 +37,15 @@ public class AuditServiceImpl implements AuditService {
 
        Audit savedaudit =  auditRepository.save(audit);
         return mapTODTO(savedaudit);
+    }
+    public  List<AuditDTO> getallAudits(){
+        List<Audit> audits = auditRepository.findAll();
+       return audits.stream().map(this::mapTODTO).toList();
+
+    }
+    public AuditDTO getAuditById(int id){
+        Audit audit = auditRepository.findById(id).orElseThrow(() -> new RuntimeException("Audit not found"));
+        return mapTODTO(audit);
     }
     private AuditDTO mapTODTO(Audit savedaudit) {
         AuditDTO auditDTO = new AuditDTO();
