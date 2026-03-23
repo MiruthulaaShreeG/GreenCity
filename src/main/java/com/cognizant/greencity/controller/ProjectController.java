@@ -3,7 +3,6 @@ package com.cognizant.greencity.controller;
 import com.cognizant.greencity.dto.project.ProjectCreateRequest;
 import com.cognizant.greencity.dto.project.ProjectResponse;
 import com.cognizant.greencity.dto.project.ProjectUpdateRequest;
-import com.cognizant.greencity.entity.Project;
 import com.cognizant.greencity.service.ProjectService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
@@ -23,42 +22,29 @@ public class ProjectController {
 
     @GetMapping
     public List<ProjectResponse> listMine(Authentication authentication) {
-        return projectService.listMine(authentication).stream().map(ProjectController::toResponse).toList();
+        return projectService.listMine(authentication);
     }
 
     @GetMapping("/{projectId}")
     public ProjectResponse getMine(@PathVariable Integer projectId, Authentication authentication) {
-        return toResponse(projectService.getMine(projectId, authentication));
+        return projectService.getMine(projectId, authentication);
     }
 
     @PostMapping
     public ProjectResponse create(@Valid @RequestBody ProjectCreateRequest request, Authentication authentication) {
-        return toResponse(projectService.create(request, authentication));
+        return projectService.create(request, authentication);
     }
 
     @PutMapping("/{projectId}")
     public ProjectResponse update(@PathVariable Integer projectId,
                                     @Valid @RequestBody ProjectUpdateRequest request,
                                     Authentication authentication) {
-        return toResponse(projectService.update(projectId, request, authentication));
+        return projectService.update(projectId, request, authentication);
     }
 
     @DeleteMapping("/{projectId}")
     public void delete(@PathVariable Integer projectId, Authentication authentication) {
         projectService.delete(projectId, authentication);
-    }
-
-    private static ProjectResponse toResponse(Project project) {
-        return new ProjectResponse(
-                project.getProjectId(),
-                project.getCreatedBy() != null ? project.getCreatedBy().getUserId() : null,
-                project.getTitle(),
-                project.getDescription(),
-                project.getStartDate(),
-                project.getEndDate(),
-                project.getBudget(),
-                project.getStatus()
-        );
     }
 }
 

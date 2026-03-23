@@ -3,7 +3,6 @@ package com.cognizant.greencity.controller;
 import com.cognizant.greencity.dto.project.MilestoneCreateRequest;
 import com.cognizant.greencity.dto.project.MilestoneResponse;
 import com.cognizant.greencity.dto.project.MilestoneUpdateRequest;
-import com.cognizant.greencity.entity.Milestone;
 import com.cognizant.greencity.service.MilestoneService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
@@ -23,23 +22,21 @@ public class MilestoneController {
 
     @GetMapping
     public List<MilestoneResponse> list(@PathVariable Integer projectId, Authentication authentication) {
-        return milestoneService.list(projectId, authentication).stream()
-                .map(MilestoneController::toResponse)
-                .toList();
+        return milestoneService.list(projectId, authentication);
     }
 
     @GetMapping("/{milestoneId}")
     public MilestoneResponse get(@PathVariable Integer projectId,
                                     @PathVariable Integer milestoneId,
                                     Authentication authentication) {
-        return toResponse(milestoneService.get(projectId, milestoneId, authentication));
+        return milestoneService.get(projectId, milestoneId, authentication);
     }
 
     @PostMapping
     public MilestoneResponse create(@PathVariable Integer projectId,
                                       @Valid @RequestBody MilestoneCreateRequest request,
                                       Authentication authentication) {
-        return toResponse(milestoneService.create(projectId, request, authentication));
+        return milestoneService.create(projectId, request, authentication);
     }
 
     @PutMapping("/{milestoneId}")
@@ -47,7 +44,7 @@ public class MilestoneController {
                                       @PathVariable Integer milestoneId,
                                       @Valid @RequestBody MilestoneUpdateRequest request,
                                       Authentication authentication) {
-        return toResponse(milestoneService.update(projectId, milestoneId, request, authentication));
+        return milestoneService.update(projectId, milestoneId, request, authentication);
     }
 
     @DeleteMapping("/{milestoneId}")
@@ -55,16 +52,6 @@ public class MilestoneController {
                         @PathVariable Integer milestoneId,
                         Authentication authentication) {
         milestoneService.delete(projectId, milestoneId, authentication);
-    }
-
-    private static MilestoneResponse toResponse(Milestone milestone) {
-        return new MilestoneResponse(
-                milestone.getMilestoneId(),
-                milestone.getProject() != null ? milestone.getProject().getProjectId() : null,
-                milestone.getTitle(),
-                milestone.getDate(),
-                milestone.getStatus()
-        );
     }
 }
 

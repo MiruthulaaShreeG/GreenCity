@@ -1,9 +1,15 @@
 package com.cognizant.greencity.entity;
 import jakarta.persistence.*;
 import java.util.List;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "resource")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Resource {
 
     @Id
@@ -31,31 +37,5 @@ public class Resource {
     @JoinColumn(name = "project_id", nullable = false)
     private Project project;
 
-    // Getters and Setters
-    public Integer getResourceId() { return resourceId; }
-    public void setResourceId(Integer resourceId) { this.resourceId = resourceId; }
-
-    public String getType() { return type; }
-    public void setType(String type) { this.type = type; }
-
-    public String getLocation() { return location; }
-    public void setLocation(String location) { this.location = location; }
-
-    public Double getCapacity() { return capacity; }
-    public void setCapacity(Double capacity) { this.capacity = capacity; }
-
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
-
-    public List<ResourceUsage> getUsages() { return usages; }
-    public void setUsages(List<ResourceUsage> usages) { this.usages = usages; }
-
-    public Project getProject() {
-        return project;
-    }
-
-    public void setProject(Project project) {
-        this.project = project;
-    }
 }
 

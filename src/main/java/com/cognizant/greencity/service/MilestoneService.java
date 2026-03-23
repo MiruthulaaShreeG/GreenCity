@@ -1,6 +1,7 @@
 package com.cognizant.greencity.service;
 
 import com.cognizant.greencity.dto.project.MilestoneCreateRequest;
+import com.cognizant.greencity.dto.project.MilestoneResponse;
 import com.cognizant.greencity.dto.project.MilestoneUpdateRequest;
 import com.cognizant.greencity.entity.Milestone;
 import com.cognizant.greencity.entity.Project;
@@ -11,6 +12,8 @@ import com.cognizant.greencity.repository.MilestoneRepository;
 import com.cognizant.greencity.repository.ProjectRepository;
 import com.cognizant.greencity.repository.UserRepository;
 import com.cognizant.greencity.security.UserPrincipal;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -18,35 +21,26 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class MilestoneService {
 
     private final MilestoneRepository milestoneRepository;
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
     private final AuditLogService auditLogService;
+    private final ModelMapper modelMapper;
 
-    public MilestoneService(MilestoneRepository milestoneRepository,
-                             ProjectRepository projectRepository,
-                             UserRepository userRepository,
-                             AuditLogService auditLogService) {
-        this.milestoneRepository = milestoneRepository;
-        this.projectRepository = projectRepository;
-        this.userRepository = userRepository;
-        this.auditLogService = auditLogService;
-    }
-
-    public List<Milestone> list(Integer projectId, Authentication authentication) {
+    public List<MilestoneResponse> list(Integer projectId, Authentication authentication) {
         enforceProjectOwner(projectId, authentication);
-        return milestoneRepository.findByProject_ProjectId(projectId);
+        return milestoneRepository.findByProject_ProjectId(projectId).stream().map(this::toResponse).toList();
     }
 
-    public Milestone get(Integer projectId, Integer milestoneId, Authentication authentication) {
+    public MilestoneResponse get(Integer projectId, Integer milestoneId, Authentication authentication) {
         enforceProjectOwner(projectId, authentication);
-        return milestoneRepository.findByMilestoneIdAndProject_ProjectId(milestoneId, projectId)
-                .orElseThrow(() -> new NotFoundException("Milestone not found"));
+        return toResponse(getEntity(projectId, milestoneId));
     }
 
-    public Milestone create(Integer projectId, MilestoneCreateRequest request, Authentication authentication) {
+    public MilestoneResponse create(Integer projectId, MilestoneCreateRequest request, Authentication authentication) {
         User user = enforceProjectOwner(projectId, authentication);
 
         Project project = projectRepository.findById(projectId)
@@ -60,12 +54,12 @@ public class MilestoneService {
 
         Milestone saved = milestoneRepository.save(milestone);
         auditLogService.record(user, "MILESTONE_CREATE", "projects/" + projectId + "/milestones/" + saved.getMilestoneId());
-        return saved;
+        return toResponse(saved);
     }
 
-    public Milestone update(Integer projectId, Integer milestoneId, MilestoneUpdateRequest request, Authentication authentication) {
+    public MilestoneResponse update(Integer projectId, Integer milestoneId, MilestoneUpdateRequest request, Authentication authentication) {
         User user = enforceProjectOwner(projectId, authentication);
-        Milestone milestone = get(projectId, milestoneId, authentication);
+        Milestone milestone = getEntity(projectId, milestoneId);
 
         if (request.getTitle() != null) milestone.setTitle(request.getTitle());
         if (request.getDate() != null) milestone.setDate(request.getDate());
@@ -73,14 +67,25 @@ public class MilestoneService {
 
         Milestone saved = milestoneRepository.save(milestone);
         auditLogService.record(user, "MILESTONE_UPDATE", "projects/" + projectId + "/milestones/" + milestoneId);
-        return saved;
+        return toResponse(saved);
     }
 
     public void delete(Integer projectId, Integer milestoneId, Authentication authentication) {
         User user = enforceProjectOwner(projectId, authentication);
-        Milestone milestone = get(projectId, milestoneId, authentication);
+        Milestone milestone = getEntity(projectId, milestoneId);
         milestoneRepository.delete(milestone);
         auditLogService.record(user, "MILESTONE_DELETE", "projects/" + projectId + "/milestones/" + milestoneId);
+    }
+
+    private Milestone getEntity(Integer projectId, Integer milestoneId) {
+        return milestoneRepository.findByMilestoneIdAndProject_ProjectId(milestoneId, projectId)
+                .orElseThrow(() -> new NotFoundException("Milestone not found"));
+    }
+
+    private MilestoneResponse toResponse(Milestone milestone) {
+        MilestoneResponse response = modelMapper.map(milestone, MilestoneResponse.class);
+        response.setProjectId(milestone.getProject() != null ? milestone.getProject().getProjectId() : null);
+        return response;
     }
 
     private User enforceProjectOwner(Integer projectId, Authentication authentication) {

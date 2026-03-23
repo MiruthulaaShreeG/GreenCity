@@ -3,7 +3,6 @@ package com.cognizant.greencity.controller;
 import com.cognizant.greencity.dto.resourceusage.ResourceUsageCreateRequest;
 import com.cognizant.greencity.dto.resourceusage.ResourceUsageResponse;
 import com.cognizant.greencity.dto.resourceusage.ResourceUsageUpdateRequest;
-import com.cognizant.greencity.entity.ResourceUsage;
 import com.cognizant.greencity.service.ResourceUsageService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
@@ -23,43 +22,31 @@ public class ResourceUsageController {
 
     @GetMapping
     public List<ResourceUsageResponse> list(@PathVariable Integer resourceId) {
-        return resourceUsageService.listByResource(resourceId).stream()
-                .map(ResourceUsageController::toResponse)
-                .toList();
+        return resourceUsageService.listByResource(resourceId);
     }
 
     @GetMapping("/{usageId}")
     public ResourceUsageResponse get(@PathVariable Integer usageId) {
-        return toResponse(resourceUsageService.get(usageId));
+        return resourceUsageService.get(usageId);
     }
 
     @PostMapping
     public ResourceUsageResponse create(@PathVariable Integer resourceId,
                                         @Valid @RequestBody ResourceUsageCreateRequest request,
                                         Authentication authentication) {
-        return toResponse(resourceUsageService.create(resourceId, request, authentication));
+        return resourceUsageService.create(resourceId, request, authentication);
     }
 
     @PutMapping("/{usageId}")
     public ResourceUsageResponse update(@PathVariable Integer usageId,
                                         @Valid @RequestBody ResourceUsageUpdateRequest request,
                                         Authentication authentication) {
-        return toResponse(resourceUsageService.update(usageId, request, authentication));
+        return resourceUsageService.update(usageId, request, authentication);
     }
 
     @DeleteMapping("/{usageId}")
     public void delete(@PathVariable Integer usageId, Authentication authentication) {
         resourceUsageService.delete(usageId, authentication);
-    }
-
-    private static ResourceUsageResponse toResponse(ResourceUsage usage) {
-        return new ResourceUsageResponse(
-                usage.getUsageId(),
-                usage.getResource() != null ? usage.getResource().getResourceId() : null,
-                usage.getQuantity(),
-                usage.getDate(),
-                usage.getStatus()
-        );
     }
 }
 

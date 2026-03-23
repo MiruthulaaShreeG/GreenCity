@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 public class UserPrincipal implements UserDetails {
 
@@ -33,7 +34,10 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + role));
+        String normalizedRole = role == null
+                ? "CITIZEN"
+                : role.trim().replace('-', '_').replace(' ', '_').toUpperCase(Locale.ROOT);
+        return List.of(new SimpleGrantedAuthority("ROLE_" + normalizedRole));
     }
 
     @Override

@@ -3,18 +3,16 @@ package com.cognizant.greencity.service;
 import com.cognizant.greencity.entity.AuditLog;
 import com.cognizant.greencity.entity.User;
 import com.cognizant.greencity.repository.AuditLogRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
 @Service
+@RequiredArgsConstructor
 public class AuditLogService {
 
     private final AuditLogRepository auditLogRepository;
-
-    public AuditLogService(AuditLogRepository auditLogRepository) {
-        this.auditLogRepository = auditLogRepository;
-    }
 
     public void record(User user, String action, String resource) {
         if (user == null) {

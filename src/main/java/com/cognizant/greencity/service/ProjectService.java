@@ -1,6 +1,7 @@
 package com.cognizant.greencity.service;
 
 import com.cognizant.greencity.dto.project.ProjectCreateRequest;
+import com.cognizant.greencity.dto.project.ProjectResponse;
 import com.cognizant.greencity.dto.project.ProjectUpdateRequest;
 import com.cognizant.greencity.entity.Project;
 import com.cognizant.greencity.entity.User;
@@ -9,37 +10,34 @@ import com.cognizant.greencity.exception.UnauthorizedException;
 import com.cognizant.greencity.repository.ProjectRepository;
 import com.cognizant.greencity.repository.UserRepository;
 import com.cognizant.greencity.security.UserPrincipal;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
     private final AuditLogService auditLogService;
+    private final ModelMapper modelMapper;
 
-    public ProjectService(ProjectRepository projectRepository, UserRepository userRepository, AuditLogService auditLogService) {
-        this.projectRepository = projectRepository;
-        this.userRepository = userRepository;
-        this.auditLogService = auditLogService;
-    }
-
-    public List<Project> listMine(Authentication authentication) {
+    public List<ProjectResponse> listMine(Authentication authentication) {
         User user = currentUser(authentication);
-        return projectRepository.findByCreatedBy_UserId(user.getUserId());
+        return projectRepository.findByCreatedBy_UserId(user.getUserId()).stream().map(this::toResponse).toList();
     }
 
-    public Project getMine(Integer projectId, Authentication authentication) {
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new NotFoundException("Project not found"));
+    public ProjectResponse getMine(Integer projectId, Authentication authentication) {
+        Project project = getEntity(projectId);
         enforceOwner(project, authentication);
-        return project;
+        return toResponse(project);
     }
 
-    public Project create(ProjectCreateRequest request, Authentication authentication) {
+    public ProjectResponse create(ProjectCreateRequest request, Authentication authentication) {
         User user = currentUser(authentication);
 
         Project project = new Project();
@@ -53,11 +51,12 @@ public class ProjectService {
 
         Project saved = projectRepository.save(project);
         auditLogService.record(user, "PROJECT_CREATE", "projects/" + saved.getProjectId());
-        return saved;
+        return toResponse(saved);
     }
 
-    public Project update(Integer projectId, ProjectUpdateRequest request, Authentication authentication) {
-        Project project = getMine(projectId, authentication);
+    public ProjectResponse update(Integer projectId, ProjectUpdateRequest request, Authentication authentication) {
+        Project project = getEntity(projectId);
+        enforceOwner(project, authentication);
         if (request.getTitle() != null) project.setTitle(request.getTitle());
         if (request.getDescription() != null) project.setDescription(request.getDescription());
         if (request.getStartDate() != null) project.setStartDate(request.getStartDate());
@@ -67,14 +66,26 @@ public class ProjectService {
 
         Project saved = projectRepository.save(project);
         auditLogService.record(currentUser(authentication), "PROJECT_UPDATE", "projects/" + projectId);
-        return saved;
+        return toResponse(saved);
     }
 
     public void delete(Integer projectId, Authentication authentication) {
-        Project project = getMine(projectId, authentication);
+        Project project = getEntity(projectId);
+        enforceOwner(project, authentication);
         User user = currentUser(authentication);
         projectRepository.delete(project);
         auditLogService.record(user, "PROJECT_DELETE", "projects/" + projectId);
+    }
+
+    private Project getEntity(Integer projectId) {
+        return projectRepository.findById(projectId)
+                .orElseThrow(() -> new NotFoundException("Project not found"));
+    }
+
+    private ProjectResponse toResponse(Project project) {
+        ProjectResponse response = modelMapper.map(project, ProjectResponse.class);
+        response.setCreatedBy(project.getCreatedBy() != null ? project.getCreatedBy().getUserId() : null);
+        return response;
     }
 
     private void enforceOwner(Project project, Authentication authentication) {

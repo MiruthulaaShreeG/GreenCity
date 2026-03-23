@@ -1,9 +1,15 @@
 package com.cognizant.greencity.entity;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "resource_usage")
+@Getter
+@Setter
+@NoArgsConstructor
 public class ResourceUsage {
 
     @Id
@@ -24,19 +30,4 @@ public class ResourceUsage {
     @Column(name = "status", nullable = false, length = 50)
     private String status;
 
-    // Getters and Setters
-    public Integer getUsageId() { return usageId; }
-    public void setUsageId(Integer usageId) { this.usageId = usageId; }
-
-    public Resource getResource() { return resource; }
-    public void setResource(Resource resource) { this.resource = resource; }
-
-    public Double getQuantity() { return quantity; }
-    public void setQuantity(Double quantity) { this.quantity = quantity; }
-
-    public LocalDateTime getDate() { return date; }
-    public void setDate(LocalDateTime date) { this.date = date; }
-
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
 }

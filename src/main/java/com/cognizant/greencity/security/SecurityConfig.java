@@ -23,6 +23,11 @@ public class SecurityConfig {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/users/**").hasRole("ADMIN")
+                        .requestMatchers("/api/audit-logs/**").hasAnyRole("ADMIN", "AUDITOR")
+                        .requestMatchers("/api/compliance-records/**").hasAnyRole("COMPLIANCE", "ADMIN", "AUDITOR")
+                        .requestMatchers("/api/projects/**", "/api/resources/**").hasAnyRole("PLANNER", "ADMIN")
+                        .requestMatchers("/api/feedback/**", "/api/citizen-reports/**").hasAnyRole("CITIZEN", "ADMIN", "PLANNER")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

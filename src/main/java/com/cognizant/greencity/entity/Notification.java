@@ -1,9 +1,15 @@
 package com.cognizant.greencity.entity;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "notifications")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Notification {
 
     @Id
@@ -38,39 +44,9 @@ public class Notification {
     private LocalDateTime createdDate;
 
 
-    public Notification() {
-    }
-
-    public Notification(User user, Report report, Integer entityId, String entityType,
-                        String message, String category, String status) {
-        this.user = user;
-        //this.report = report;
-        this.entityId = entityId;
-        this.entityType = entityType;
-        this.message = message;
-        this.category = category;
-        this.status = status;
-    }
-
     @PrePersist
     protected void onCreate() {
         this.createdDate = LocalDateTime.now();
-    }
-
-    public Integer getNotificationId() {
-        return notificationId;
-    }
-
-    public void setNotificationId(Integer notificationId) {
-        this.notificationId = notificationId;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
 //    public Report getReport() {
@@ -81,51 +57,4 @@ public class Notification {
 //        this.report = report;
 //    }
 
-    public Integer getEntityId() {
-        return entityId;
-    }
-
-    public void setEntityId(Integer entityId) {
-        this.entityId = entityId;
-    }
-
-    public String getEntityType() {
-        return entityType;
-    }
-
-    public void setEntityType(String entityType) {
-        this.entityType = entityType;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
 }

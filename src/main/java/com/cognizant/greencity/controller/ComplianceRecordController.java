@@ -3,7 +3,6 @@ package com.cognizant.greencity.controller;
 import com.cognizant.greencity.dto.compliance.ComplianceRecordCreateRequest;
 import com.cognizant.greencity.dto.compliance.ComplianceRecordResponse;
 import com.cognizant.greencity.dto.compliance.ComplianceRecordUpdateRequest;
-import com.cognizant.greencity.entity.ComplianceRecord;
 import com.cognizant.greencity.service.ComplianceRecordService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
@@ -23,41 +22,30 @@ public class ComplianceRecordController {
 
     @GetMapping
     public List<ComplianceRecordResponse> list() {
-        return complianceRecordService.list().stream().map(ComplianceRecordController::toResponse).toList();
+        return complianceRecordService.list();
     }
 
     @GetMapping("/{complianceId}")
     public ComplianceRecordResponse get(@PathVariable Integer complianceId) {
-        return toResponse(complianceRecordService.get(complianceId));
+        return complianceRecordService.get(complianceId);
     }
 
     @PostMapping
     public ComplianceRecordResponse create(@Valid @RequestBody ComplianceRecordCreateRequest request,
                                               Authentication authentication) {
-        return toResponse(complianceRecordService.create(request, authentication));
+        return complianceRecordService.create(request, authentication);
     }
 
     @PutMapping("/{complianceId}")
     public ComplianceRecordResponse update(@PathVariable Integer complianceId,
                                               @Valid @RequestBody ComplianceRecordUpdateRequest request,
                                               Authentication authentication) {
-        return toResponse(complianceRecordService.update(complianceId, request, authentication));
+        return complianceRecordService.update(complianceId, request, authentication);
     }
 
     @DeleteMapping("/{complianceId}")
     public void delete(@PathVariable Integer complianceId, Authentication authentication) {
         complianceRecordService.delete(complianceId, authentication);
-    }
-
-    private static ComplianceRecordResponse toResponse(ComplianceRecord record) {
-        return new ComplianceRecordResponse(
-                record.getComplianceId(),
-                record.getEntityId(),
-                record.getEntityType(),
-                record.getResult(),
-                record.getDate(),
-                record.getNotes()
-        );
     }
 }
 

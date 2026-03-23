@@ -2,9 +2,15 @@ package com.cognizant.greencity.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "reports")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Report {
 
     public enum Scope {
@@ -35,66 +41,5 @@ public class Report {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "generated_by", nullable = false)
     private User generatedBy;
-
-
-    public Report() {
-
-    }
-
-    public Integer getReportId() {
-        return reportId;
-    }
-
-    public void setReportId(Integer reportId) {
-        this.reportId = reportId;
-    }
-
-    public Audit getAudit() {
-        return audit;
-    }
-
-    public void setAudit(Audit audit) {
-        this.audit = audit;
-    }
-
-    public Scope getScope() {
-        return scope;
-    }
-
-    public void setScope(Scope scope) {
-        this.scope = scope;
-    }
-
-    public Long getEntityId() {
-        return entityId;
-    }
-
-    public void setEntityId(Long entityId) {
-        this.entityId = entityId;
-    }
-
-    public String getMetrics() {
-        return metrics;
-    }
-
-    public void setMetrics(String metrics) {
-        this.metrics = metrics;
-    }
-
-    public LocalDateTime getGeneratedDate() {
-        return generatedDate;
-    }
-
-    public void setGeneratedDate(LocalDateTime generatedDate) {
-        this.generatedDate = generatedDate;
-    }
-
-    public User getGeneratedBy() {
-        return generatedBy;
-    }
-
-    public void setGeneratedBy(User generatedBy) {
-        this.generatedBy = generatedBy;
-    }
 
 }

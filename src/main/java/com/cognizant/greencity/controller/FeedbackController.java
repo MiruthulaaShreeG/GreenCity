@@ -3,7 +3,6 @@ package com.cognizant.greencity.controller;
 import com.cognizant.greencity.dto.feedback.FeedbackCreateRequest;
 import com.cognizant.greencity.dto.feedback.FeedbackResponse;
 import com.cognizant.greencity.dto.feedback.FeedbackUpdateRequest;
-import com.cognizant.greencity.entity.Feedback;
 import com.cognizant.greencity.service.FeedbackService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
@@ -23,38 +22,27 @@ public class FeedbackController {
 
     @GetMapping
     public List<FeedbackResponse> listMine(Authentication authentication) {
-        return feedbackService.listMine(authentication).stream().map(FeedbackController::toResponse).toList();
+        return feedbackService.listMine(authentication);
     }
 
     @GetMapping("/{id}")
     public FeedbackResponse getMine(@PathVariable Integer id, Authentication authentication) {
-        return toResponse(feedbackService.getMine(id, authentication));
+        return feedbackService.getMine(id, authentication);
     }
 
     @PostMapping
     public FeedbackResponse create(@Valid @RequestBody FeedbackCreateRequest request, Authentication authentication) {
-        return toResponse(feedbackService.create(request, authentication));
+        return feedbackService.create(request, authentication);
     }
 
     @PutMapping("/{id}")
     public FeedbackResponse update(@PathVariable Integer id, @Valid @RequestBody FeedbackUpdateRequest request, Authentication authentication) {
-        return toResponse(feedbackService.update(id, request, authentication));
+        return feedbackService.update(id, request, authentication);
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Integer id, Authentication authentication) {
         feedbackService.delete(id, authentication);
-    }
-
-    private static FeedbackResponse toResponse(Feedback feedback) {
-        return new FeedbackResponse(
-                feedback.getFeedbackID(),
-                feedback.getCitizen() != null ? feedback.getCitizen().getUserId() : null,
-                feedback.getCategory(),
-                feedback.getComments(),
-                feedback.getDate(),
-                feedback.getStatus()
-        );
     }
 }
 

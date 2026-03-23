@@ -3,7 +3,6 @@ package com.cognizant.greencity.controller;
 import com.cognizant.greencity.dto.audit.AuditCreateRequest;
 import com.cognizant.greencity.dto.audit.AuditResponse;
 import com.cognizant.greencity.dto.audit.AuditUpdateRequest;
-import com.cognizant.greencity.entity.Audit;
 import com.cognizant.greencity.service.AuditService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
@@ -23,21 +22,19 @@ public class AuditController {
 
     @GetMapping
     public List<AuditResponse> list(@PathVariable Integer complianceId) {
-        return auditService.listByCompliance(complianceId).stream()
-                .map(AuditController::toResponse)
-                .toList();
+        return auditService.listByCompliance(complianceId);
     }
 
     @GetMapping("/{auditId}")
     public AuditResponse get(@PathVariable Integer complianceId, @PathVariable Integer auditId) {
-        return toResponse(auditService.getByCompliance(complianceId, auditId));
+        return auditService.getByCompliance(complianceId, auditId);
     }
 
     @PostMapping
     public AuditResponse create(@PathVariable Integer complianceId,
                                   @Valid @RequestBody AuditCreateRequest request,
                                   Authentication authentication) {
-        return toResponse(auditService.create(complianceId, request, authentication));
+        return auditService.create(complianceId, request, authentication);
     }
 
     @PutMapping("/{auditId}")
@@ -45,7 +42,7 @@ public class AuditController {
                                   @PathVariable Integer auditId,
                                   @Valid @RequestBody AuditUpdateRequest request,
                                   Authentication authentication) {
-        return toResponse(auditService.update(complianceId, auditId, request, authentication));
+        return auditService.update(complianceId, auditId, request, authentication);
     }
 
     @DeleteMapping("/{auditId}")
@@ -53,18 +50,6 @@ public class AuditController {
                          @PathVariable Integer auditId,
                          Authentication authentication) {
         auditService.delete(complianceId, auditId, authentication);
-    }
-
-    private static AuditResponse toResponse(Audit audit) {
-        return new AuditResponse(
-                audit.getAuditId(),
-                audit.getComplianceRecord() != null ? audit.getComplianceRecord().getComplianceId() : null,
-                audit.getOfficer() != null ? audit.getOfficer().getUserId() : null,
-                audit.getScope(),
-                audit.getFindings(),
-                audit.getDate(),
-                audit.getStatus()
-        );
     }
 }
 

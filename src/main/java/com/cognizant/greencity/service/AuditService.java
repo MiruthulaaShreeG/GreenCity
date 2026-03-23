@@ -1,7 +1,7 @@
 package com.cognizant.greencity.service;
 
 import com.cognizant.greencity.dto.audit.AuditCreateRequest;
-
+import com.cognizant.greencity.dto.audit.AuditResponse;
 import com.cognizant.greencity.dto.audit.AuditUpdateRequest;
 import com.cognizant.greencity.entity.Audit;
 import com.cognizant.greencity.entity.ComplianceRecord;
@@ -12,6 +12,8 @@ import com.cognizant.greencity.repository.AuditRepository;
 import com.cognizant.greencity.repository.ComplianceRecordRepository;
 import com.cognizant.greencity.repository.UserRepository;
 import com.cognizant.greencity.security.UserPrincipal;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -19,55 +21,45 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class AuditService {
 
     private final AuditRepository auditRepository;
     private final ComplianceRecordRepository complianceRecordRepository;
     private final UserRepository userRepository;
     private final AuditLogService auditLogService;
+    private final ModelMapper modelMapper;
 
-    public AuditService(
-            AuditRepository auditRepository,
-            ComplianceRecordRepository complianceRecordRepository,
-            UserRepository userRepository,
-            AuditLogService auditLogService
-    ) {
-        this.auditRepository = auditRepository;
-        this.complianceRecordRepository = complianceRecordRepository;
-        this.userRepository = userRepository;
-        this.auditLogService = auditLogService;
+    public List<AuditResponse> listByCompliance(Integer complianceId) {
+        return auditRepository.findByComplianceRecord_ComplianceId(complianceId).stream()
+                .map(this::toResponse)
+                .toList();
     }
 
-    public List<Audit> listByCompliance(Integer complianceId) {
-        return auditRepository.findByComplianceRecord_ComplianceId(complianceId);
+    public AuditResponse getByCompliance(Integer complianceId, Integer auditId) {
+        return toResponse(getEntityByCompliance(complianceId, auditId));
     }
 
-    public Audit getByCompliance(Integer complianceId, Integer auditId) {
-        return auditRepository.findByAuditIdAndComplianceRecord_ComplianceId(auditId, complianceId)
-                .orElseThrow(() -> new NotFoundException("Audit not found"));
-    }
-
-    public Audit create(Integer complianceId, AuditCreateRequest request, Authentication authentication) {
+    public AuditResponse create(Integer complianceId, AuditCreateRequest request, Authentication authentication) {
         User officer = currentUser(authentication);
         ComplianceRecord complianceRecord = complianceRecordRepository.findById(complianceId)
                 .orElseThrow(() -> new NotFoundException("ComplianceRecord not found"));
 
-        Audit audit = new Audit();
+        Audit audit = modelMapper.map(request, Audit.class);
         audit.setOfficer(officer);
         audit.setComplianceRecord(complianceRecord);
-        audit.setScope(request.getScope());
-        audit.setFindings(request.getFindings());
-        audit.setDate(request.getDate() != null ? request.getDate() : LocalDateTime.now());
-        audit.setStatus(request.getStatus());
+        if (audit.getDate() == null) {
+            audit.setDate(LocalDateTime.now());
+        }
 
         Audit saved = auditRepository.save(audit);
         auditLogService.record(officer, "AUDIT_CREATE", "audits/" + saved.getAuditId());
-        return saved;
+        return toResponse(saved);
     }
 
-    public Audit update(Integer complianceId, Integer auditId, AuditUpdateRequest request, Authentication authentication) {
+    public AuditResponse update(Integer complianceId, Integer auditId, AuditUpdateRequest request, Authentication authentication) {
         User officer = currentUser(authentication);
-        Audit audit = getByCompliance(complianceId, auditId);
+        Audit audit = getEntityByCompliance(complianceId, auditId);
 
         if (request.getScope() != null) audit.setScope(request.getScope());
         if (request.getFindings() != null) audit.setFindings(request.getFindings());
@@ -76,14 +68,26 @@ public class AuditService {
 
         Audit saved = auditRepository.save(audit);
         auditLogService.record(officer, "AUDIT_UPDATE", "audits/" + saved.getAuditId());
-        return saved;
+        return toResponse(saved);
     }
 
     public void delete(Integer complianceId, Integer auditId, Authentication authentication) {
         User officer = currentUser(authentication);
-        Audit audit = getByCompliance(complianceId, auditId);
+        Audit audit = getEntityByCompliance(complianceId, auditId);
         auditRepository.delete(audit);
         auditLogService.record(officer, "AUDIT_DELETE", "audits/" + auditId);
+    }
+
+    private Audit getEntityByCompliance(Integer complianceId, Integer auditId) {
+        return auditRepository.findByAuditIdAndComplianceRecord_ComplianceId(auditId, complianceId)
+                .orElseThrow(() -> new NotFoundException("Audit not found"));
+    }
+
+    private AuditResponse toResponse(Audit audit) {
+        AuditResponse response = modelMapper.map(audit, AuditResponse.class);
+        response.setComplianceId(audit.getComplianceRecord() != null ? audit.getComplianceRecord().getComplianceId() : null);
+        response.setOfficerId(audit.getOfficer() != null ? audit.getOfficer().getUserId() : null);
+        return response;
     }
 
     private User currentUser(Authentication authentication) {

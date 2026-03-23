@@ -1,6 +1,7 @@
 package com.cognizant.greencity.service;
 
 import com.cognizant.greencity.dto.resourceusage.ResourceUsageCreateRequest;
+import com.cognizant.greencity.dto.resourceusage.ResourceUsageResponse;
 import com.cognizant.greencity.dto.resourceusage.ResourceUsageUpdateRequest;
 import com.cognizant.greencity.entity.Resource;
 import com.cognizant.greencity.entity.ResourceUsage;
@@ -10,6 +11,8 @@ import com.cognizant.greencity.repository.ResourceRepository;
 import com.cognizant.greencity.repository.ResourceUsageRepository;
 import com.cognizant.greencity.repository.UserRepository;
 import com.cognizant.greencity.security.UserPrincipal;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -17,32 +20,24 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ResourceUsageService {
 
     private final ResourceUsageRepository usageRepository;
     private final ResourceRepository resourceRepository;
     private final UserRepository userRepository;
     private final AuditLogService auditLogService;
+    private final ModelMapper modelMapper;
 
-    public ResourceUsageService(ResourceUsageRepository usageRepository,
-                                ResourceRepository resourceRepository,
-                                UserRepository userRepository,
-                                AuditLogService auditLogService) {
-        this.usageRepository = usageRepository;
-        this.resourceRepository = resourceRepository;
-        this.userRepository = userRepository;
-        this.auditLogService = auditLogService;
+    public List<ResourceUsageResponse> listByResource(Integer resourceId) {
+        return usageRepository.findByResource_ResourceId(resourceId).stream().map(this::toResponse).toList();
     }
 
-    public List<ResourceUsage> listByResource(Integer resourceId) {
-        return usageRepository.findByResource_ResourceId(resourceId);
+    public ResourceUsageResponse get(Integer id) {
+        return toResponse(getEntity(id));
     }
 
-    public ResourceUsage get(Integer id) {
-        return usageRepository.findById(id).orElseThrow(() -> new NotFoundException("Resource usage not found"));
-    }
-
-    public ResourceUsage create(Integer resourceId, ResourceUsageCreateRequest request, Authentication authentication) {
+    public ResourceUsageResponse create(Integer resourceId, ResourceUsageCreateRequest request, Authentication authentication) {
         Resource resource = resourceRepository.findById(resourceId)
                 .orElseThrow(() -> new NotFoundException("Resource not found"));
 
@@ -54,11 +49,11 @@ public class ResourceUsageService {
 
         ResourceUsage saved = usageRepository.save(usage);
         auditLogService.record(currentUser(authentication), "RESOURCE_USAGE_CREATE", "resources/" + resourceId + "/usage/" + saved.getUsageId());
-        return saved;
+        return toResponse(saved);
     }
 
-    public ResourceUsage update(Integer usageId, ResourceUsageUpdateRequest request, Authentication authentication) {
-        ResourceUsage usage = get(usageId);
+    public ResourceUsageResponse update(Integer usageId, ResourceUsageUpdateRequest request, Authentication authentication) {
+        ResourceUsage usage = getEntity(usageId);
 
         if (request.getQuantity() != null) usage.setQuantity(request.getQuantity());
         if (request.getStatus() != null) usage.setStatus(request.getStatus());
@@ -66,14 +61,24 @@ public class ResourceUsageService {
         ResourceUsage saved = usageRepository.save(usage);
         Integer resourceId = usage.getResource() != null ? usage.getResource().getResourceId() : null;
         auditLogService.record(currentUser(authentication), "RESOURCE_USAGE_UPDATE", "resources/" + resourceId + "/usage/" + usageId);
-        return saved;
+        return toResponse(saved);
     }
 
     public void delete(Integer usageId, Authentication authentication) {
-        ResourceUsage usage = get(usageId);
+        ResourceUsage usage = getEntity(usageId);
         Integer resourceId = usage.getResource() != null ? usage.getResource().getResourceId() : null;
         usageRepository.delete(usage);
         auditLogService.record(currentUser(authentication), "RESOURCE_USAGE_DELETE", "resources/" + resourceId + "/usage/" + usageId);
+    }
+
+    private ResourceUsage getEntity(Integer id) {
+        return usageRepository.findById(id).orElseThrow(() -> new NotFoundException("Resource usage not found"));
+    }
+
+    private ResourceUsageResponse toResponse(ResourceUsage usage) {
+        ResourceUsageResponse response = modelMapper.map(usage, ResourceUsageResponse.class);
+        response.setResourceId(usage.getResource() != null ? usage.getResource().getResourceId() : null);
+        return response;
     }
 
     private User currentUser(Authentication authentication) {

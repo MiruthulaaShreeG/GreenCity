@@ -9,6 +9,7 @@ import com.cognizant.greencity.exception.UnauthorizedException;
 import com.cognizant.greencity.repository.UserRepository;
 import com.cognizant.greencity.security.JwtService;
 import com.cognizant.greencity.security.UserPrincipal;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
 
     private static final String DEFAULT_ROLE = "CITIZEN";
@@ -29,20 +31,6 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final AuditLogService auditLogService;
-
-    public AuthService(
-            UserRepository userRepository,
-            PasswordEncoder passwordEncoder,
-            AuthenticationManager authenticationManager,
-            JwtService jwtService,
-            AuditLogService auditLogService
-    ) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.authenticationManager = authenticationManager;
-        this.jwtService = jwtService;
-        this.auditLogService = auditLogService;
-    }
 
     public AuthResponse register(RegisterRequest request) {
         String email = request.getEmail().trim().toLowerCase();
@@ -61,12 +49,7 @@ public class AuthService {
         User saved = userRepository.save(user);
         auditLogService.record(saved, "REGISTER", "auth");
 
-        String token = jwtService.generateToken(saved.getEmail(), Map.of(
-                "uid", saved.getUserId(),
-                "role", saved.getRole()
-        ));
-
-        return new AuthResponse(token, saved.getUserId(), saved.getName(), saved.getEmail(), saved.getRole());
+        return new AuthResponse(null, saved.getUserId(), saved.getName(), saved.getEmail(), saved.getRole());
     }
 
     public AuthResponse login(LoginRequest request) {

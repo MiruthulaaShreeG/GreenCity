@@ -1,17 +1,21 @@
 package com.cognizant.greencity.service;
 
 import com.cognizant.greencity.dto.user.UserCreateRequest;
+import com.cognizant.greencity.dto.user.UserResponse;
 import com.cognizant.greencity.dto.user.UserUpdateRequest;
 import com.cognizant.greencity.entity.User;
 import com.cognizant.greencity.exception.BadRequestException;
 import com.cognizant.greencity.exception.NotFoundException;
 import com.cognizant.greencity.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private static final String DEFAULT_ROLE = "CITIZEN";
@@ -20,22 +24,17 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuditLogService auditLogService;
+    private final ModelMapper modelMapper;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuditLogService auditLogService) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.auditLogService = auditLogService;
+    public List<UserResponse> list() {
+        return userRepository.findAll().stream().map(this::toResponse).toList();
     }
 
-    public List<User> list() {
-        return userRepository.findAll();
+    public UserResponse get(Integer id) {
+        return toResponse(getEntity(id));
     }
 
-    public User get(Integer id) {
-        return userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found"));
-    }
-
-    public User create(UserCreateRequest request) {
+    public UserResponse create(UserCreateRequest request) {
         String email = request.getEmail().trim().toLowerCase();
         if (userRepository.existsByEmail(email)) {
             throw new BadRequestException("Email already registered");
@@ -51,11 +50,11 @@ public class UserService {
 
         User saved = userRepository.save(user);
         auditLogService.record(saved, "USER_CREATE", "users");
-        return saved;
+        return toResponse(saved);
     }
 
-    public User update(Integer id, UserUpdateRequest request) {
-        User user = get(id);
+    public UserResponse update(Integer id, UserUpdateRequest request) {
+        User user = getEntity(id);
 
         if (request.getName() != null) user.setName(request.getName().trim());
         if (request.getPhone() != null) user.setPhone(request.getPhone());
@@ -63,13 +62,21 @@ public class UserService {
 
         User saved = userRepository.save(user);
         auditLogService.record(saved, "USER_UPDATE", "users/" + id);
-        return saved;
+        return toResponse(saved);
     }
 
     public void delete(Integer id) {
-        User user = get(id);
+        User user = getEntity(id);
         userRepository.delete(user);
         auditLogService.record(user, "USER_DELETE", "users/" + id);
+    }
+
+    private User getEntity(Integer id) {
+        return userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found"));
+    }
+
+    private UserResponse toResponse(User user) {
+        return modelMapper.map(user, UserResponse.class);
     }
 }
 

@@ -1,6 +1,7 @@
 package com.cognizant.greencity.service;
 
 import com.cognizant.greencity.dto.resource.ResourceCreateRequest;
+import com.cognizant.greencity.dto.resource.ResourceResponse;
 import com.cognizant.greencity.dto.resource.ResourceUpdateRequest;
 import com.cognizant.greencity.entity.Project;
 import com.cognizant.greencity.entity.Resource;
@@ -10,41 +11,35 @@ import com.cognizant.greencity.repository.ProjectRepository;
 import com.cognizant.greencity.repository.ResourceRepository;
 import com.cognizant.greencity.repository.UserRepository;
 import com.cognizant.greencity.security.UserPrincipal;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ResourceService {
 
     private final ResourceRepository resourceRepository;
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
     private final AuditLogService auditLogService;
+    private final ModelMapper modelMapper;
 
-    public ResourceService(ResourceRepository resourceRepository,
-                           ProjectRepository projectRepository,
-                           UserRepository userRepository,
-                           AuditLogService auditLogService) {
-        this.resourceRepository = resourceRepository;
-        this.projectRepository = projectRepository;
-        this.userRepository = userRepository;
-        this.auditLogService = auditLogService;
-    }
-
-    public List<Resource> list(Integer projectId) {
+    public List<ResourceResponse> list(Integer projectId) {
         if (projectId != null) {
-            return resourceRepository.findByProject_ProjectId(projectId);
+            return resourceRepository.findByProject_ProjectId(projectId).stream().map(this::toResponse).toList();
         }
-        return resourceRepository.findAll();
+        return resourceRepository.findAll().stream().map(this::toResponse).toList();
     }
 
-    public Resource get(Integer id) {
-        return resourceRepository.findById(id).orElseThrow(() -> new NotFoundException("Resource not found"));
+    public ResourceResponse get(Integer id) {
+        return toResponse(getEntity(id));
     }
 
-    public Resource create(ResourceCreateRequest request, Authentication authentication) {
+    public ResourceResponse create(ResourceCreateRequest request, Authentication authentication) {
         Project project = projectRepository.findById(request.getProjectId())
                 .orElseThrow(() -> new NotFoundException("Project not found"));
 
@@ -57,11 +52,11 @@ public class ResourceService {
 
         Resource saved = resourceRepository.save(resource);
         auditLogService.record(currentUser(authentication), "RESOURCE_CREATE", "resources/" + saved.getResourceId());
-        return saved;
+        return toResponse(saved);
     }
 
-    public Resource update(Integer id, ResourceUpdateRequest request, Authentication authentication) {
-        Resource resource = get(id);
+    public ResourceResponse update(Integer id, ResourceUpdateRequest request, Authentication authentication) {
+        Resource resource = getEntity(id);
 
         if (request.getType() != null) resource.setType(request.getType());
         if (request.getLocation() != null) resource.setLocation(request.getLocation());
@@ -70,13 +65,23 @@ public class ResourceService {
 
         Resource saved = resourceRepository.save(resource);
         auditLogService.record(currentUser(authentication), "RESOURCE_UPDATE", "resources/" + id);
-        return saved;
+        return toResponse(saved);
     }
 
     public void delete(Integer id, Authentication authentication) {
-        Resource resource = get(id);
+        Resource resource = getEntity(id);
         resourceRepository.delete(resource);
         auditLogService.record(currentUser(authentication), "RESOURCE_DELETE", "resources/" + id);
+    }
+
+    private Resource getEntity(Integer id) {
+        return resourceRepository.findById(id).orElseThrow(() -> new NotFoundException("Resource not found"));
+    }
+
+    private ResourceResponse toResponse(Resource resource) {
+        ResourceResponse response = modelMapper.map(resource, ResourceResponse.class);
+        response.setProjectId(resource.getProject() != null ? resource.getProject().getProjectId() : null);
+        return response;
     }
 
     private User currentUser(Authentication authentication) {
