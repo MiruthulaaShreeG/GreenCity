@@ -34,24 +34,24 @@ public class UserService {
         return toResponse(getEntity(id));
     }
 
-    public UserResponse create(UserCreateRequest request) {
-        String email = request.getEmail().trim().toLowerCase();
-        if (userRepository.existsByEmail(email)) {
-            throw new BadRequestException("Email already registered");
-        }
-
-        User user = new User();
-        user.setName(request.getName().trim());
-        user.setEmail(email);
-        user.setPhone(request.getPhone());
-        user.setRole(DEFAULT_ROLE);
-        user.setStatus(DEFAULT_STATUS);
-        user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
-
-        User saved = userRepository.save(user);
-        auditLogService.record(saved, "USER_CREATE", "users");
-        return toResponse(saved);
-    }
+//    public UserResponse create(UserCreateRequest request) {
+//        String email = request.getEmail().trim().toLowerCase();
+//        if (userRepository.existsByEmail(email)) {
+//            throw new BadRequestException("Email already registered");
+//        }
+//
+//        User user = new User();
+//        user.setName(request.getName().trim());
+//        user.setEmail(email);
+//        user.setPhone(request.getPhone());
+//        user.setRole(DEFAULT_ROLE);
+//        user.setStatus(DEFAULT_STATUS);
+//        user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+//
+//        User saved = userRepository.save(user);
+//        auditLogService.record(saved, "USER_CREATE", "users");
+//        return toResponse(saved);
+//    }
 
     public UserResponse update(Integer id, UserUpdateRequest request) {
         User user = getEntity(id);
