@@ -7,6 +7,8 @@ import com.cognizant.greencity.entity.User;
 import com.cognizant.greencity.repository.UserRepository;
 import com.cognizant.greencity.security.UserPrincipal;
 import com.cognizant.greencity.service.AuthService;
+
+
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;

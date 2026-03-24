@@ -1,5 +1,7 @@
 package com.cognizant.greencity.dto.project;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,11 +15,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ImpactCreateRequest {
 
+
     private LocalDateTime date;
 
+    @NotBlank
     @Size(max = 1000000)
     private String metricsJson;
 
+    @NotBlank
     @Size(max = 255)
     private String status;
 }

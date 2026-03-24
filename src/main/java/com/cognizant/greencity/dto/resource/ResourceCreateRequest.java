@@ -4,9 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 
 @Data
@@ -14,21 +14,22 @@ import jakarta.validation.constraints.Size;
 @AllArgsConstructor
 public class ResourceCreateRequest {
 
-    @NotNull
+    @NotNull(message = "Project ID is needed")
     private Integer projectId;
 
-    @NotBlank
+    @NotBlank(message = "Type is needed")
     @Size(max = 50)
     private String type;
 
-    @NotBlank
+    @NotBlank(message = "Location is needed")
     @Size(max = 255)
     private String location;
 
-    @NotNull
-    @Min(0)
+    @NotNull(message = "Capacity is needed")
+    @PositiveOrZero(message = "Capacity cannot be negative")
     private Double capacity;
 
+    @NotBlank(message = "Status is needed")
     @Size(max = 50)
     private String status;
 }

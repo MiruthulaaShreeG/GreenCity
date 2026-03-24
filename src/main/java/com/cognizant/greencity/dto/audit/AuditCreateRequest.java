@@ -19,8 +19,11 @@ public class AuditCreateRequest {
     
     private LocalDateTime date;
 
+    @NotBlank
     @Size(max = 255)
     private String status;
+
+    @NotBlank
 
     @Size(max = 2000)
     private String findings;

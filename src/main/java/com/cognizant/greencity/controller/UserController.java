@@ -29,10 +29,10 @@ public class UserController {
         return userService.get(id);
     }
 
-    @PostMapping
-    public UserResponse create(@Valid @RequestBody UserCreateRequest request) {
-        return userService.create(request);
-    }
+//    @PostMapping
+//    public UserResponse create(@Valid @RequestBody UserCreateRequest request) {
+//        return userService.create(request);
+//    }
 
     @PutMapping("/{id}")
     public UserResponse update(@PathVariable Integer id, @Valid @RequestBody UserUpdateRequest request) {

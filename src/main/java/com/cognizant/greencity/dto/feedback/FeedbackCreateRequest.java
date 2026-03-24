@@ -20,6 +20,7 @@ public class FeedbackCreateRequest {
     @Size(max = 255)
     private String comments;
 
+    @NotBlank
     @Size(max = 255)
     private String status;
 }

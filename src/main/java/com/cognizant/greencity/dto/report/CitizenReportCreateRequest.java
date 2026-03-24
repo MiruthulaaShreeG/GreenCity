@@ -20,6 +20,7 @@ public class CitizenReportCreateRequest {
     @Size(max = 255)
     private String location;
 
+    @NotBlank
     @Size(max = 255)
     private String status;
 }

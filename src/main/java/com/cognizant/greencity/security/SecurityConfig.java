@@ -25,7 +25,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/users/**").hasRole("ADMIN")
                         .requestMatchers("/api/audit-logs/**").hasAnyRole("ADMIN", "AUDITOR")
-                        .requestMatchers("/api/compliance-records/**").hasAnyRole("COMPLIANCE", "ADMIN", "AUDITOR")
+                        .requestMatchers("/api/compliance-records/**").hasAnyRole("COMPLIANCE", "ADMIN")
                         .requestMatchers("/api/projects/**", "/api/resources/**").hasAnyRole("PLANNER", "ADMIN")
                         .requestMatchers("/api/feedback/**", "/api/citizen-reports/**").hasAnyRole("CITIZEN", "ADMIN", "PLANNER")
                         .anyRequest().authenticated()
