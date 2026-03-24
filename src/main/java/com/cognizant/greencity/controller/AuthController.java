@@ -3,9 +3,6 @@ package com.cognizant.greencity.controller;
 import com.cognizant.greencity.dto.auth.AuthResponse;
 import com.cognizant.greencity.dto.auth.LoginRequest;
 import com.cognizant.greencity.dto.auth.RegisterRequest;
-import com.cognizant.greencity.entity.User;
-import com.cognizant.greencity.repository.UserRepository;
-import com.cognizant.greencity.security.UserPrincipal;
 import com.cognizant.greencity.service.AuthService;
 
 
@@ -20,11 +17,9 @@ import java.util.Map;
 public class AuthController {
 
     private final AuthService authService;
-    private final UserRepository userRepository;
 
-    public AuthController(AuthService authService, UserRepository userRepository) {
+    public AuthController(AuthService authService) {
         this.authService = authService;
-        this.userRepository = userRepository;
     }
 
     @PostMapping("/register")

@@ -1,6 +1,5 @@
 package com.cognizant.greencity.controller;
 
-import com.cognizant.greencity.dto.user.UserCreateRequest;
 import com.cognizant.greencity.dto.user.UserResponse;
 import com.cognizant.greencity.dto.user.UserUpdateRequest;
 import com.cognizant.greencity.service.UserService;
