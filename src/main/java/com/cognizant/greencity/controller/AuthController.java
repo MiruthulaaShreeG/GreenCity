@@ -39,15 +39,7 @@ public class AuthController {
 
     @GetMapping("/me")
     public Map<String, Object> me(Authentication authentication) {
-        UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
-        User user = userRepository.findByEmail(principal.getUsername()).orElseThrow();
-        return Map.of(
-                "userId", user.getUserId(),
-                "name", user.getName(),
-                "email", user.getEmail(),
-                "role", user.getRole(),
-                "status", user.getStatus()
-        );
+        return authService.getme(authentication);
     }
 }
 

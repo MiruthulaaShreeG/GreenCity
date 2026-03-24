@@ -1,5 +1,6 @@
 package com.cognizant.greencity.security;
 
+import com.cognizant.greencity.exception.CustomAccessDeniedHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,6 +17,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 public class SecurityConfig {
 
+    private final CustomAccessDeniedHandler accessDeniedHandler;
+
+    public SecurityConfig(CustomAccessDeniedHandler accessDeniedHandler) {
+        this.accessDeniedHandler = accessDeniedHandler;
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtFilter) throws Exception {
         return http
@@ -25,12 +32,15 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/users/**").hasRole("ADMIN")
                         .requestMatchers("/api/audit-logs/**").hasAnyRole("ADMIN", "AUDITOR")
-                        .requestMatchers("/api/compliance-records/**").hasAnyRole("COMPLIANCE", "ADMIN")
+                        .requestMatchers("/api/compliance-records/**").hasAnyRole("COMPLIANCE", "ADMIN", "AUDITOR")
                         .requestMatchers("/api/projects/**", "/api/resources/**").hasAnyRole("PLANNER", "ADMIN")
                         .requestMatchers("/api/feedback/**", "/api/citizen-reports/**").hasAnyRole("CITIZEN", "ADMIN", "PLANNER")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(exception -> exception
+                        .accessDeniedHandler(accessDeniedHandler)
+                )
                 .build();
     }
 
@@ -44,4 +54,3 @@ public class SecurityConfig {
         return configuration.getAuthenticationManager();
     }
 }
-
