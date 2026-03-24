@@ -1,0 +1,7 @@
+package com.cognizant.greencity.exception;
+
+public class NotFoundException extends RuntimeException {
+    public NotFoundException(String message) {
+        super(message);
+    }
+}
