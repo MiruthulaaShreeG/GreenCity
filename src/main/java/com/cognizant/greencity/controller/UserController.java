@@ -1,9 +1,10 @@
 package com.cognizant.greencity.controller;
-import com.cognizant.greencity.dto.UserDTO;
+
+import com.cognizant.greencity.dto.user.UserCreateRequest;
+import com.cognizant.greencity.dto.user.UserResponse;
+import com.cognizant.greencity.dto.user.UserUpdateRequest;
 import com.cognizant.greencity.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,44 +12,36 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
-    @Autowired
-    private  UserService userService;
-    @PostMapping("/register")
-    public ResponseEntity<UserDTO> registerUser(@RequestBody UserDTO userDto) {
-        UserDTO createdUser = userService.registerUser(userDto);
-        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
-    @GetMapping("/email/{email}")
-    public ResponseEntity<UserDTO> getUserByEmail(@PathVariable String email) {
-        UserDTO user = userService.getUserByEmail(email);
-        if (user != null) {
-            return ResponseEntity.ok(user);
-        }
-        return ResponseEntity.notFound().build();
+    @GetMapping
+    public List<UserResponse> list() {
+        return userService.list();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> getUserById(@PathVariable Integer id) {
-        UserDTO user = userService.getUserById(id);
-        return (user != null) ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
+    public UserResponse get(@PathVariable Integer id) {
+        return userService.get(id);
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<UserDTO>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    @PostMapping
+    public UserResponse create(@Valid @RequestBody UserCreateRequest request) {
+        return userService.create(request);
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable Integer id, @RequestBody UserDTO userDto) {
-        UserDTO updatedUser = userService.updateUser(id, userDto);
-        return (updatedUser != null) ? ResponseEntity.ok(updatedUser) : ResponseEntity.notFound().build();
+    @PutMapping("/{id}")
+    public UserResponse update(@PathVariable Integer id, @Valid @RequestBody UserUpdateRequest request) {
+        return userService.update(id, request);
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable Integer id) {
-        userService.deleteUser(id);
-        return ResponseEntity.ok("User deleted successfully!");
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Integer id) {
+        userService.delete(id);
     }
-
 }
+

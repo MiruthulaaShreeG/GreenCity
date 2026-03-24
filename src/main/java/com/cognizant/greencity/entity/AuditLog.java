@@ -1,9 +1,15 @@
 package com.cognizant.greencity.entity;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name="audit_logs")
+@Getter
+@Setter
+@NoArgsConstructor
 public class AuditLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,47 +25,11 @@ public class AuditLog {
     @Column(name = "timestamp")
     private LocalDateTime timestamp;
 
-    public AuditLog(){
-
+    @PrePersist
+    protected void onCreate() {
+        if (this.timestamp == null) {
+            this.timestamp = LocalDateTime.now();
+        }
     }
 
-    public Integer getAuditId() {
-        return auditId;
-    }
-
-    public void setAuditId(Integer auditId) {
-        this.auditId = auditId;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
-
-    public String getResources() {
-        return resources;
-    }
-
-    public void setResources(String resources) {
-        this.resources = resources;
-    }
-
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
-    }
 }
