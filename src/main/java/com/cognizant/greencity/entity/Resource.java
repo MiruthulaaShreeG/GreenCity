@@ -27,8 +27,8 @@ public class Resource {
     @OneToMany(mappedBy = "resource", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ResourceUsage> usages;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "project_id", nullable = false)
+    @ManyToOne(optional=true)
+    @JoinColumn(name = "project_id", nullable = true)
     private Project project;
 
     // Getters and Setters

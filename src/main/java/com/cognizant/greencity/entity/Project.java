@@ -49,7 +49,8 @@ public class Project {
 //    private List<ComplianceRecord> complianceRecords;
 
     // One project can trigger many notifications
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany
+    @JoinColumn(name = "ProjectID")
     private List<Notification> notifications;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

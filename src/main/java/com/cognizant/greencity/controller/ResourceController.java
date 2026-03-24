@@ -27,7 +27,10 @@ public class ResourceController {
     }
 
     @PostMapping
-    public Resource createResource(@RequestBody ResourceDTO dto) {
+    public Resource createResource(@RequestBody ResourceDTO dto,@RequestHeader("userId") UUID userId,@RequestHeader("role") String role) {
+        if ("AUDITOR".equalsIgnoreCase(role)) {
+            throw new SecurityException("Auditors have read-only access");
+        }
         Resource resource = new Resource();
         resource.setType(dto.getType());
         resource.setLocation(dto.getLocation());
