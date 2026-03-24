@@ -1,72 +1,92 @@
 package com.cognizant.greencity.service;
 
+import com.cognizant.greencity.dto.resource.ResourceCreateRequest;
+import com.cognizant.greencity.dto.resource.ResourceResponse;
+import com.cognizant.greencity.dto.resource.ResourceUpdateRequest;
 import com.cognizant.greencity.entity.Resource;
-import com.cognizant.greencity.entity.AuditLog;
-import com.cognizant.greencity.dao.AuditLogRepository;
-import com.cognizant.greencity.exception.ResourceNotFoundException;
-import com.cognizant.greencity.dao.ResourceRepository;
+import com.cognizant.greencity.exception.NotFoundException;
+import com.cognizant.greencity.repository.ProjectRepository;
+import com.cognizant.greencity.repository.ResourceRepository;
+import com.cognizant.greencity.security.UserPrincipal;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ResourceService {
 
     private final ResourceRepository resourceRepository;
-    private final AuditLogRepository auditLogRepository;
+    private final ProjectRepository projectRepository;
+    private final UserRepository userRepository;
+    private final AuditLogService auditLogService;
+    private final ModelMapper modelMapper;
 
-    public ResourceService(ResourceRepository resourceRepository, AuditLogRepository auditLogRepository) {
-        this.resourceRepository = resourceRepository;
-        this.auditLogRepository = auditLogRepository;
+    public List<ResourceResponse> list(Integer projectId) {
+        if (projectId != null) {
+            return resourceRepository.findByProject_ProjectId(projectId).stream().map(this::toResponse).toList();
+        }
+        return resourceRepository.findAll().stream().map(this::toResponse).toList();
     }
 
-    public List<Resource> getAllResources() {
-        return resourceRepository.findAll();
+    public ResourceResponse get(Integer id) {
+        return toResponse(getEntity(id));
     }
 
-    public Resource getResourceById(UUID id) {
-        return resourceRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Resource not found with ID: " + id));
-    }
+    public ResourceResponse create(ResourceCreateRequest request, Authentication authentication) {
+        Project project = projectRepository.findById(request.getProjectId())
+                .orElseThrow(() -> new NotFoundException("Project not found"));
 
-    public Resource createResource(Resource resource, UUID userId) {
+        Resource resource = new Resource();
+        resource.setProject(project);
+        resource.setType(request.getType());
+        resource.setLocation(request.getLocation());
+        resource.setCapacity(request.getCapacity());
+        resource.setStatus(request.getStatus() != null ? request.getStatus() : "ACTIVE");
+
         Resource saved = resourceRepository.save(resource);
-        logAudit(userId, "CREATE", "Resource", null, saved.toString());
-        return saved;
+        auditLogService.record(currentUser(authentication), "RESOURCE_CREATE", "resources/" + saved.getResourceId());
+        return toResponse(saved);
     }
 
-    public Resource updateResource(UUID id, Resource updatedResource, UUID userId) {
-        return resourceRepository.findById(id).map(resource -> {
-            String oldValue = resource.toString();
-            resource.setType(updatedResource.getType());
-            resource.setLocation(updatedResource.getLocation());
-            resource.setCapacity(updatedResource.getCapacity());
-            resource.setStatus(updatedResource.getStatus());
-            Resource saved = resourceRepository.save(resource);
-            logAudit(userId, "UPDATE", "Resource", oldValue, saved.toString());
-            return saved;
-        }).orElseThrow(() -> new ResourceNotFoundException("Resource not found with ID: " + id));
+    public ResourceResponse update(Integer id, ResourceUpdateRequest request, Authentication authentication) {
+        Resource resource = getEntity(id);
+
+        if (request.getType() != null) resource.setType(request.getType());
+        if (request.getLocation() != null) resource.setLocation(request.getLocation());
+        if (request.getCapacity() != null) resource.setCapacity(request.getCapacity());
+        if (request.getStatus() != null) resource.setStatus(request.getStatus());
+
+        Resource saved = resourceRepository.save(resource);
+        auditLogService.record(currentUser(authentication), "RESOURCE_UPDATE", "resources/" + id);
+        return toResponse(saved);
     }
 
-    public void deleteResource(UUID id, UUID userId) {
-        Resource resource = resourceRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Resource not found with ID: " + id));
-        resourceRepository.deleteById(id);
-        logAudit(userId, "DELETE", "Resource", resource.toString(), null);
+    public void delete(Integer id, Authentication authentication) {
+        Resource resource = getEntity(id);
+        resourceRepository.delete(resource);
+        auditLogService.record(currentUser(authentication), "RESOURCE_DELETE", "resources/" + id);
     }
 
-    private void logAudit(UUID userId, String action, String entity, String oldValue, String newValue) {
-        AuditLog log = new AuditLog();
-        log.setUserId(userId);
-        log.setAction(action);
-        log.setEntity(entity);
-        log.setOldValue(oldValue);
-        log.setNewValue(newValue);
-        log.setTimestamp(LocalDateTime.now());
-        auditLogRepository.save(log);
+    private Resource getEntity(Integer id) {
+        return resourceRepository.findById(id).orElseThrow(() -> new NotFoundException("Resource not found"));
     }
 
+    private ResourceResponse toResponse(Resource resource) {
+        ResourceResponse response = modelMapper.map(resource, ResourceResponse.class);
+        response.setProjectId(resource.getProject() != null ? resource.getProject().getProjectId() : null);
+        return response;
+    }
 
+    private User currentUser(Authentication authentication) {
+        if (authentication == null || !(authentication.getPrincipal() instanceof UserPrincipal principal)) {
+            return null;
+        }
+        return userRepository.findById(principal.getUserId())
+                .orElseThrow(() -> new NotFoundException("User not found"));
+    }
 }
+

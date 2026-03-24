@@ -1,57 +1,50 @@
 package com.cognizant.greencity.controller;
 
-import com.cognizant.greencity.dto.ResourceDTO;
-import com.cognizant.greencity.entity.Resource;
-import com.cognizant.greencity.dao.ResourceRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.cognizant.greencity.dto.resource.ResourceCreateRequest;
+import com.cognizant.greencity.dto.resource.ResourceResponse;
+import com.cognizant.greencity.dto.resource.ResourceUpdateRequest;
+import com.cognizant.greencity.service.ResourceService;
+import jakarta.validation.Valid;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/resources")
 public class ResourceController {
 
-    @Autowired
-    private ResourceRepository resourceRepository;
+    private final ResourceService resourceService;
+
+    public ResourceController(ResourceService resourceService) {
+        this.resourceService = resourceService;
+    }
 
     @GetMapping
-    public List<Resource> getAllResources() {
-        return resourceRepository.findAll();
+    public List<ResourceResponse> list(@RequestParam(value = "projectId", required = false) Integer projectId) {
+        return resourceService.list(projectId);
     }
 
     @GetMapping("/{id}")
-    public Resource getResourceById(@PathVariable UUID id) {
-        return resourceRepository.findById(id).orElse(null);
+    public ResourceResponse get(@PathVariable Integer id) {
+        return resourceService.get(id);
     }
 
     @PostMapping
-    public Resource createResource(@RequestBody ResourceDTO dto,@RequestHeader("userId") UUID userId,@RequestHeader("role") String role) {
-        if ("AUDITOR".equalsIgnoreCase(role)) {
-            throw new SecurityException("Auditors have read-only access");
-        }
-        Resource resource = new Resource();
-        resource.setType(dto.getType());
-        resource.setLocation(dto.getLocation());
-        resource.setCapacity(dto.getCapacity());
-        resource.setStatus(dto.getStatus());
-        return resourceRepository.save(resource);
+    public ResourceResponse create(@Valid @RequestBody ResourceCreateRequest request, Authentication authentication) {
+        return resourceService.create(request, authentication);
     }
 
     @PutMapping("/{id}")
-    public Resource updateResource(@PathVariable UUID id, @RequestBody ResourceDTO dto) {
-        return resourceRepository.findById(id).map(resource -> {
-            resource.setType(dto.getType());
-            resource.setLocation(dto.getLocation());
-            resource.setCapacity(dto.getCapacity());
-            resource.setStatus(dto.getStatus());
-            return resourceRepository.save(resource);
-        }).orElse(null);
+    public ResourceResponse update(@PathVariable Integer id,
+                                   @Valid @RequestBody ResourceUpdateRequest request,
+                                   Authentication authentication) {
+        return resourceService.update(id, request, authentication);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteResource(@PathVariable UUID id) {
-        resourceRepository.deleteById(id);
+    public void delete(@PathVariable Integer id, Authentication authentication) {
+        resourceService.delete(id, authentication);
     }
 }
+

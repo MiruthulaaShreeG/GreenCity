@@ -1,61 +1,52 @@
 package com.cognizant.greencity.controller;
 
-import com.cognizant.greencity.dto.ResourceUsageDTO;
-import com.cognizant.greencity.entity.Resource;
-import com.cognizant.greencity.entity.ResourceUsage;
-import com.cognizant.greencity.dao.ResourceRepository;
-import com.cognizant.greencity.dao.ResourceUsageRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.cognizant.greencity.dto.resourceusage.ResourceUsageCreateRequest;
+import com.cognizant.greencity.dto.resourceusage.ResourceUsageResponse;
+import com.cognizant.greencity.dto.resourceusage.ResourceUsageUpdateRequest;
+import com.cognizant.greencity.service.ResourceUsageService;
+import jakarta.validation.Valid;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/resource-usage")
+@RequestMapping("/api/resources/{resourceId}/usage")
 public class ResourceUsageController {
 
-    @Autowired
-    private ResourceUsageRepository usageRepository;
+    private final ResourceUsageService resourceUsageService;
 
-    @Autowired
-    private ResourceRepository resourceRepository;
-
-    @GetMapping
-    public List<ResourceUsage> getAllUsage() {
-        return usageRepository.findAll();
+    public ResourceUsageController(ResourceUsageService resourceUsageService) {
+        this.resourceUsageService = resourceUsageService;
     }
 
-    @GetMapping("/{id}")
-    public ResourceUsage getUsageById(@PathVariable UUID id) {
-        return usageRepository.findById(id).orElse(null);
+    @GetMapping
+    public List<ResourceUsageResponse> list(@PathVariable Integer resourceId) {
+        return resourceUsageService.listByResource(resourceId);
+    }
+
+    @GetMapping("/{usageId}")
+    public ResourceUsageResponse get(@PathVariable Integer usageId) {
+        return resourceUsageService.get(usageId);
     }
 
     @PostMapping
-    public ResourceUsage createUsage(@RequestBody ResourceUsageDTO dto) {
-        Resource resource = resourceRepository.findById(dto.getResourceId()).orElse(null);
-        if (resource == null) return null;
-
-        ResourceUsage usage = new ResourceUsage();
-        usage.setResource(resource);
-        usage.setQuantity(dto.getQuantity());
-        usage.setDate(dto.getDate());
-        usage.setStatus(dto.getStatus());
-        return usageRepository.save(usage);
+    public ResourceUsageResponse create(@PathVariable Integer resourceId,
+                                        @Valid @RequestBody ResourceUsageCreateRequest request,
+                                        Authentication authentication) {
+        return resourceUsageService.create(resourceId, request, authentication);
     }
 
-    @PutMapping("/{id}")
-    public ResourceUsage updateUsage(@PathVariable UUID id, @RequestBody ResourceUsageDTO dto) {
-        return usageRepository.findById(id).map(usage -> {
-            usage.setQuantity(dto.getQuantity());
-            usage.setDate(dto.getDate());
-            usage.setStatus(dto.getStatus());
-            return usageRepository.save(usage);
-        }).orElse(null);
+    @PutMapping("/{usageId}")
+    public ResourceUsageResponse update(@PathVariable Integer usageId,
+                                        @Valid @RequestBody ResourceUsageUpdateRequest request,
+                                        Authentication authentication) {
+        return resourceUsageService.update(usageId, request, authentication);
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteUsage(@PathVariable UUID id) {
-        usageRepository.deleteById(id);
+    @DeleteMapping("/{usageId}")
+    public void delete(@PathVariable Integer usageId, Authentication authentication) {
+        resourceUsageService.delete(usageId, authentication);
     }
 }
+
