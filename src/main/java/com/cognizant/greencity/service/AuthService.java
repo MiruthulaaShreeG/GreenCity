@@ -73,5 +73,16 @@ public class AuthService {
             throw new UnauthorizedException("Invalid credentials");
         }
     }
+    public Map<String ,Object> getme(Authentication authentication) {
+        UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
+        User user = userRepository.findByEmail(principal.getUsername()).orElseThrow();
+        return Map.of(
+                "userId", user.getUserId(),
+                "name", user.getName(),
+                "email", user.getEmail(),
+                "role", user.getRole(),
+                "status", user.getStatus()
+        );
+    }
 }
 
