@@ -5,6 +5,7 @@ import com.cognizant.greencity.dto.compliance.ComplianceRecordResponse;
 import com.cognizant.greencity.dto.compliance.ComplianceRecordUpdateRequest;
 import com.cognizant.greencity.entity.Audit;
 import com.cognizant.greencity.entity.ComplianceRecord;
+import com.cognizant.greencity.entity.User;
 import com.cognizant.greencity.exception.BadRequestException;
 import com.cognizant.greencity.exception.NotFoundException;
 import com.cognizant.greencity.exception.UnauthorizedException;

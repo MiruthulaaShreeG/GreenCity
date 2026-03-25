@@ -3,6 +3,7 @@ package com.cognizant.greencity.controller;
 import com.cognizant.greencity.dto.feedback.FeedbackCreateRequest;
 import com.cognizant.greencity.dto.feedback.FeedbackResponse;
 import com.cognizant.greencity.dto.feedback.FeedbackUpdateRequest;
+import com.cognizant.greencity.service.FeedbackService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
