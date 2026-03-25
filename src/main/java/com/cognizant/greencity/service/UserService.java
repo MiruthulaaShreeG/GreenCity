@@ -1,15 +1,12 @@
 package com.cognizant.greencity.service;
 
-import com.cognizant.greencity.dto.user.UserCreateRequest;
 import com.cognizant.greencity.dto.user.UserResponse;
 import com.cognizant.greencity.dto.user.UserUpdateRequest;
 import com.cognizant.greencity.entity.User;
-import com.cognizant.greencity.exception.BadRequestException;
 import com.cognizant.greencity.exception.NotFoundException;
 import com.cognizant.greencity.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,11 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService {
 
-    private static final String DEFAULT_ROLE = "CITIZEN";
-    private static final String DEFAULT_STATUS = "ACTIVE";
-
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
     private final AuditLogService auditLogService;
     private final ModelMapper modelMapper;
 
@@ -32,25 +25,6 @@ public class UserService {
 
     public UserResponse get(Integer id) {
         return toResponse(getEntity(id));
-    }
-
-    public UserResponse create(UserCreateRequest request) {
-        String email = request.getEmail().trim().toLowerCase();
-        if (userRepository.existsByEmail(email)) {
-            throw new BadRequestException("Email already registered");
-        }
-
-        User user = new User();
-        user.setName(request.getName().trim());
-        user.setEmail(email);
-        user.setPhone(request.getPhone());
-        user.setRole(DEFAULT_ROLE);
-        user.setStatus(DEFAULT_STATUS);
-        user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
-
-        User saved = userRepository.save(user);
-        auditLogService.record(saved, "USER_CREATE", "users");
-        return toResponse(saved);
     }
 
     public UserResponse update(Integer id, UserUpdateRequest request) {

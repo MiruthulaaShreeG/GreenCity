@@ -46,6 +46,7 @@ public class CitizenReportService {
         report.setType(request.getType());
         report.setLocation(request.getLocation());
         report.setStatus(request.getStatus() != null ? request.getStatus() : "OPEN");
+        report.setDate(LocalDateTime.now());
 
         CitizenReport saved = citizenReportRepository.save(report);
         auditLogService.record(user, "CITIZEN_REPORT_CREATE", "citizen-reports/" + saved.getReportId());

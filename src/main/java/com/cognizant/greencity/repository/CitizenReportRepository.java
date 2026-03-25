@@ -8,3 +8,4 @@ import java.util.List;
 public interface CitizenReportRepository extends JpaRepository<CitizenReport, Integer> {
     List<CitizenReport> findByCitizen_UserId(Integer userId);
 }
+
