@@ -95,11 +95,17 @@ public class ComplianceRecordService {
     }
 
     private User currentUser(Authentication authentication) {
-        if (authentication == null || !(authentication.getPrincipal() instanceof UserPrincipal principal)) {
-            throw new UnauthorizedException("Unauthorized");
+        if(authentication == null) {
+            throw  new UnauthorizedException("Unauthorized");
         }
-        return userRepository.findById(principal.getUserId())
+        String useremail = authentication.getName();
+        return userRepository.findByEmail(useremail)
                 .orElseThrow(() -> new NotFoundException("User not found"));
+//        if (authentication == null || !(authentication.getPrincipal() instanceof UserPrincipal principal)) {
+//            throw new UnauthorizedException("Unauthorized");
+//        }
+//        return userRepository.findById(principal.getUserId())
+//                .orElseThrow(() -> new NotFoundException("User not found"));
     }
 }
 
