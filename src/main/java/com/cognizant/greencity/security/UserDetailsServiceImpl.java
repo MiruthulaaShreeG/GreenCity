@@ -1,5 +1,7 @@
 package com.cognizant.greencity.security;
 
+import com.cognizant.greencity.entity.User;
+import com.cognizant.greencity.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
