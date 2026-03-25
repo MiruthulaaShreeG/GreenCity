@@ -1,9 +1,8 @@
-package com.cognizant.greencity;
+package com.cognizant.greencity.service;
 
 import com.cognizant.greencity.entity.AuditLog;
 import com.cognizant.greencity.entity.User;
 import com.cognizant.greencity.repository.AuditLogRepository;
-import com.cognizant.greencity.service.AuditLogService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

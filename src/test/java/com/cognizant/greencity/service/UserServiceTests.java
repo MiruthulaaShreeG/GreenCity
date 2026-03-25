@@ -1,12 +1,10 @@
-package com.cognizant.greencity;
+package com.cognizant.greencity.service;
 
 import com.cognizant.greencity.dto.user.UserResponse;
 import com.cognizant.greencity.dto.user.UserUpdateRequest;
 import com.cognizant.greencity.entity.User;
 import com.cognizant.greencity.exception.NotFoundException;
 import com.cognizant.greencity.repository.UserRepository;
-import com.cognizant.greencity.service.AuditLogService;
-import com.cognizant.greencity.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

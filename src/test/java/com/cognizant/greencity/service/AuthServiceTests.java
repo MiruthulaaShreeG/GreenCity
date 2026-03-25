@@ -1,4 +1,4 @@
-package com.cognizant.greencity;
+package com.cognizant.greencity.service;
 
 import com.cognizant.greencity.dto.auth.AuthResponse;
 import com.cognizant.greencity.dto.auth.LoginRequest;
@@ -9,8 +9,6 @@ import com.cognizant.greencity.exception.UnauthorizedException;
 import com.cognizant.greencity.repository.UserRepository;
 import com.cognizant.greencity.security.JwtService;
 import com.cognizant.greencity.security.UserPrincipal;
-import com.cognizant.greencity.service.AuditLogService;
-import com.cognizant.greencity.service.AuthService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
