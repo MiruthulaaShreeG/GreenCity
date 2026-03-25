@@ -18,7 +18,7 @@ public class Audit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "audit_id")
     private Integer auditId;
-
+   
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "officer_id", nullable = false)
     private User officer;

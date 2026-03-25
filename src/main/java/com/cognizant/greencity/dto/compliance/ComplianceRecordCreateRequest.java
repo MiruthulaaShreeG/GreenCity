@@ -22,11 +22,13 @@ public class ComplianceRecordCreateRequest {
     @Size(max = 255)
     private String entityType; // "Project" or "Resource"
 
+    @NotBlank
     @Size(max = 255)
     private String result;
 
     private LocalDateTime date;
 
+    @NotBlank
     @Size(max = 255)
     private String notes;
 }
