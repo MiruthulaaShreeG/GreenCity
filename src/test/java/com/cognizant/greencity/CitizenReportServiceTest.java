@@ -32,7 +32,7 @@ class CitizenReportServiceTest {
 
     @BeforeEach
     void setUp() {
-        citizenReportRepository = mock(CitizenReportRepository.class);
+           citizenReportRepository = mock(CitizenReportRepository.class);
         userRepository = mock(UserRepository.class);
         auditLogService = mock(AuditLogService.class);
         modelMapper = new ModelMapper();

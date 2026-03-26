@@ -19,7 +19,7 @@ public class CitizenReportController {
     private static final Logger logger = LoggerFactory.getLogger(CitizenReportController.class);
     private final CitizenReportService citizenReportService;
 
-    public CitizenReportController(CitizenReportService citizenReportService) {
+    public CitizenReportController (CitizenReportService citizenReportService) {
         this.citizenReportService = citizenReportService;
     }
 
