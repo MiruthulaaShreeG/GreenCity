@@ -21,9 +21,7 @@ public class Notification {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "report_id")
-//    private Report report;
+
 
     @Column(name = "entity_id")
     private Integer entityId;
@@ -49,12 +47,6 @@ public class Notification {
         this.createdDate = LocalDateTime.now();
     }
 
-//    public Report getReport() {
-//        return report;
-//    }
 
-//    public void setReport(Report report) {
-//        this.report = report;
-//    }
 
 }

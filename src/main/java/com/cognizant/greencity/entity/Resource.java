@@ -29,7 +29,7 @@ public class Resource {
     @Column(name = "status", nullable = false, length = 50)
     private String status;
 
-    // One resource can have multiple usage records
+
     @OneToMany(mappedBy = "resource", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ResourceUsage> usages;
 
